@@ -34,14 +34,58 @@ function ciniki_reporting_reportRun($ciniki, $tnid, $report_id) {
     }
 
     //
-    // Create the email 
+    // Update the next run for the report
     //
-    if( isset($report['text']) ) {
-        
-        print_r($report['text']);
-        print_r($report['html']);
+    $dt = new DateTime($report['next_dt'], new DateTimezone('UTC'));
+    if( $report['frequency'] == 10 ) {
+        $dt->add(new DateInterval('P1D'));
+    } elseif( $report['frequency'] == 30 ) {
+        $dt->add(new DateInterval('P7D'));
+    } elseif( $report['frequency'] == 50 ) {
+        $dt->add(new DateInterval('P1M'));
+    }
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
+    $rc = ciniki_core_objectUpdate($ciniki, $tnid, 'ciniki.reporting.report', $report['id'], array('next_date'=>$dt->format('Y-m-d H:i:s'))); 
+    if( $rc['stat'] != 'ok' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.reporting.18', 'msg'=>'Unable to update the next run time', 'err'=>$rc['err']));
     }
 
+
+    //
+    // Create the email 
+    //
+    if( isset($report['text']) && isset($report['user_ids']) && count($report['user_ids']) > 0 ) {
+        $filename = preg_replace("/[^0-9a-zA-Z ]/", "", $report['title']);
+        $filename = preg_replace("/ /", '-', $filename);
+        //
+        // Get the users email
+        //
+        $strsql = "SELECT id, CONCAT_WS(' ', firstname, lastname) AS name, email "
+            . "FROM ciniki_users "
+            . "WHERE id IN (" . ciniki_core_dbQuoteIDs($ciniki, $report['user_ids']) . ") "
+            . "";
+        $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.users', 'user');
+        if( $rc['stat'] != 'ok' ) {
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.reporting.17', 'msg'=>'Unable to find email information', 'err'=>$rc['err']));
+        }
+        foreach($rc['rows'] as $user) {
+            $name = $user['name'];
+            $email = $user['email'];
+            ciniki_core_loadMethod($ciniki, 'ciniki', 'mail', 'hooks', 'addMessage');
+            $rc = ciniki_mail_hooks_addMessage($ciniki, $tnid, array(
+                'customer_email'=>$email,
+                'customer_name'=>$name,
+                'subject'=>$report['title'],
+                'html_content'=>$report['html'],
+                'text_content'=>$report['text'],
+                'attachments'=>array(array('content'=>$report['pdf']->Output($filename . '.pdf', 'S'), 'filename'=>$filename)),
+                ));
+            if( $rc['stat'] != 'ok' ) {
+                return $rc;
+            }
+            $ciniki['emailqueue'][] = array('mail_id'=>$rc['id'], 'tnid'=>$tnid);
+        }
+    }
 
     return array('stat'=>'ok');
 }

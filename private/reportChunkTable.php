@@ -37,7 +37,9 @@ function ciniki_reporting_reportChunkTable($ciniki, $tnid, &$report, $chunk) {
         $html .= "<tr>";
         $pdfhtml .= '<tr nobr="true">';
         foreach($chunk['columns'] as $col) {
-            $html .= '<td style="border: 1px solid #aaa; padding: 5px;">';
+            $html .= '<td'
+                . (isset($col['colspan']) && $col['colspan'] != '' ? ' colspan="' . $col['colspan'] . '"' : '')
+                . ' style="border: 1px solid #aaa; padding: 5px;">';
             $pdfhtml .= '<td style="border: 0.1px solid #aaa;' . (isset($col['pdfwidth']) ? 'width:' . $col['pdfwidth'] : '') . '">' ;
             if( isset($row[$col['field']]) ) {
                 $field_value = $row[$col['field']];
@@ -62,7 +64,9 @@ function ciniki_reporting_reportChunkTable($ciniki, $tnid, &$report, $chunk) {
             if( isset($col['type']) && $col['type'] == 'dollar' ) {
                 $field_value = '$' . number_format($field_value, 2);
             }
-            $html .= "<th>" . $field_value . "</th>";
+            $html .= "<th"
+                . (isset($col['colspan']) && $col['colspan'] != '' ? ' colspan="' . $col['colspan'] . '"' : '')
+                . ">" . $field_value . "</th>";
             $pdfhtml .= '<th bgcolor="#dddddd" style="border: 0.1px solid #aaa;' 
                 . (isset($col['pdfwidth']) ? 'width:' . $col['pdfwidth'] : '') . '">' . $field_value . "</th>";
         }

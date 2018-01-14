@@ -120,6 +120,10 @@ function ciniki_reporting_reportStart($ciniki, $tnid, &$report) {
                     $this->sss = 0;
                     if( $this->getY() > ($this->getPageHeight() - $this->top_margin - $this->bottom_margin - 40) ) {
                         $this->AddPage();
+                    } else {
+                        if( $this->ss > 1 ) {
+                            $this->Ln(8);
+                        }
                     }
                     $this->SetFont('helvetica', 'B', '14');
                     if( $this->section_numbering == 'yes' ) {

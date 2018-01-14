@@ -37,6 +37,18 @@ function ciniki_reporting_reportBlock($ciniki, $tnid, &$report, $block) {
         // Add the content based on type
         //
         foreach($block['chunks'] as $chunk) {
+            if( isset($chunk['title']) && $chunk['title'] != '' ) {
+                // Text
+                $report['text'] .= $chunk['title'] . "\n";
+                $report['text'] .= str_repeat("=", strlen($chunk['title'])) . "\n\n";
+                // Html
+                $report['html'] .= "<h2>" . $chunk['title'] . "</h2>";
+                // PDF
+                $report['pdf']->addTitle(2, $chunk['title'], 'yes');
+                // Excel
+                // FIXME: Add Title to Excel
+            }
+
             $fn = '';
             switch($chunk['type']) {
                 case 'message': $fn = 'ciniki_reporting_reportChunkMessage'; break;

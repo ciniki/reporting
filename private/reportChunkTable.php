@@ -46,6 +46,9 @@ function ciniki_reporting_reportChunkTable($ciniki, $tnid, &$report, $chunk) {
                 if( isset($col['type']) && $col['type'] == 'dollar' ) {
                     $field_value = '$' . number_format($field_value, 2);
                 }
+                if( isset($col['line2']) && isset($row[$col['line2']]) && $row[$col['line2']] != '' ) {
+                    $field_value .= ($field_value != '' ? "\n" : '') . $row[$col['line2']];
+                }
                 $html .= preg_replace("/\n/", "<br/>", $field_value);
                 $pdfhtml .= preg_replace("/\n/", "<br/>", $field_value);
             }

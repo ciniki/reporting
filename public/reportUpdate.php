@@ -92,9 +92,9 @@ function ciniki_reporting_reportUpdate(&$ciniki) {
             $date_str = $report['next_date'];
         }
         if( isset($args['next_time']) ) {
-            $date_str = ' ' . $args['next_time'];
+            $date_str .= ' ' . $args['next_time'];
         } else {
-            $date_str = ' ' . $report['next_time'];
+            $date_str .= ' ' . $report['next_time'];
         }
         $ts = strtotime($date_str);
         if( $ts === FALSE || $ts < 1 ) {

@@ -78,7 +78,7 @@ function ciniki_reporting_reportRun($ciniki, $tnid, $report_id) {
                 'subject'=>$report['title'],
                 'html_content'=>$report['html'],
                 'text_content'=>$report['text'],
-                'attachments'=>array(array('content'=>$report['pdf']->Output($filename . '.pdf', 'S'), 'filename'=>$filename)),
+                'attachments'=>array(array('content'=>$report['pdf']->Output($filename . '.pdf', 'S'), 'filename'=>$filename . '.pdf')),
                 ));
             if( $rc['stat'] != 'ok' ) {
                 return $rc;

@@ -40,6 +40,16 @@ function ciniki_reporting_reportPDF(&$ciniki) {
     }
 
     //
+    // Load the tenant settings
+    //
+    ciniki_core_loadMethod($ciniki, 'core', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $args['tnid']);
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    $intl_timezone = $rc['settings']['intl-default-timezone'];
+
+    //
     // Execute the report
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'reporting', 'private', 'reportExec'); 
@@ -49,7 +59,8 @@ function ciniki_reporting_reportPDF(&$ciniki) {
     }
     $report = $rc['report'];
 
-    $filename = preg_replace("/[^0-9a-zA-Z ]/", "", $report['title']);
+    $dt = new DateTime('now', new DateTimezone($intl_timezone));
+    $filename = preg_replace("/[^0-9a-zA-Z ]/", "", $dt->format('Y M d') . ' ' . $report['title']);
     $filename = preg_replace("/ /", '-', $filename);
 
     //
@@ -74,7 +85,7 @@ function ciniki_reporting_reportPDF(&$ciniki) {
         $rc = ciniki_mail_hooks_addMessage($ciniki, $args['tnid'], array(
             'customer_email'=>$email,
             'customer_name'=>$name,
-            'subject'=>$report['title'],
+            'subject'=>$report['title'] . ' - ' . $dt->format('M j, Y'),
             'html_content'=>$report['html'],
             'text_content'=>$report['text'],
             'attachments'=>array(array('content'=>$report['pdf']->Output($filename . '.pdf', 'S'), 'filename'=>$filename)),

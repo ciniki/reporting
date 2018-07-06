@@ -14,7 +14,19 @@
 // -------
 //
 function ciniki_reporting_reportRun($ciniki, $tnid, $report_id) {
+    //
+    // Load the tenant settings
+    //
+    ciniki_core_loadMethod($ciniki, 'core', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $tnid);
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    $intl_timezone = $rc['settings']['intl-default-timezone'];
 
+    //
+    // Execute the report
+    //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'reporting', 'private', 'reportExec');
     $rc = ciniki_reporting_reportExec($ciniki, $tnid, $report_id);
     if( $rc['stat'] != 'ok' ) {
@@ -50,12 +62,12 @@ function ciniki_reporting_reportRun($ciniki, $tnid, $report_id) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.reporting.18', 'msg'=>'Unable to update the next run time', 'err'=>$rc['err']));
     }
 
-
     //
     // Create the email 
     //
     if( isset($report['text']) && isset($report['user_ids']) && count($report['user_ids']) > 0 ) {
-        $filename = preg_replace("/[^0-9a-zA-Z ]/", "", $report['title']);
+        $dt = new DateTime('now', new DateTimezone($intl_timezone));
+        $filename = preg_replace("/[^0-9a-zA-Z ]/", "", $dt->format('Y M d') . ' ' . $report['title']);
         $filename = preg_replace("/ /", '-', $filename);
         //
         // Get the users email
@@ -75,7 +87,7 @@ function ciniki_reporting_reportRun($ciniki, $tnid, $report_id) {
             $rc = ciniki_mail_hooks_addMessage($ciniki, $tnid, array(
                 'customer_email'=>$email,
                 'customer_name'=>$name,
-                'subject'=>$report['title'],
+                'subject'=>$dt->format('Y-M-d') . ' - ' . $report['title'],
                 'html_content'=>$report['html'],
                 'text_content'=>$report['text'],
                 'attachments'=>array(array('content'=>$report['pdf']->Output($filename . '.pdf', 'S'), 'filename'=>$filename . '.pdf')),

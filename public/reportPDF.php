@@ -88,7 +88,7 @@ function ciniki_reporting_reportPDF(&$ciniki) {
             'subject'=>$report['title'] . ' - ' . $dt->format('M j, Y'),
             'html_content'=>$report['html'],
             'text_content'=>$report['text'],
-            'attachments'=>array(array('content'=>$report['pdf']->Output($filename . '.pdf', 'S'), 'filename'=>$filename)),
+            'attachments'=>array(array('content'=>$report['pdf']->Output($filename . '.pdf', 'S'), 'filename'=>$filename . '.pdf')),
             ));
         if( $rc['stat'] != 'ok' ) {
             return $rc;

@@ -42,7 +42,7 @@ function ciniki_reporting_reportPDF(&$ciniki) {
     //
     // Load the tenant settings
     //
-    ciniki_core_loadMethod($ciniki, 'core', 'tenants', 'private', 'intlSettings');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
     $rc = ciniki_tenants_intlSettings($ciniki, $args['tnid']);
     if( $rc['stat'] != 'ok' ) {
         return $rc;

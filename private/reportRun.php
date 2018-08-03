@@ -65,7 +65,7 @@ function ciniki_reporting_reportRun($ciniki, $tnid, $report_id) {
     //
     // Create the email 
     //
-    if( isset($report['text']) && isset($report['user_ids']) && count($report['user_ids']) > 0 ) {
+    if( isset($report['text']) && $report['text'] != '' && isset($report['user_ids']) && count($report['user_ids']) > 0 ) {
         $dt = new DateTime('now', new DateTimezone($intl_timezone));
         $filename = preg_replace("/[^0-9a-zA-Z ]/", "", $dt->format('Y M d') . ' ' . $report['title']);
         $filename = preg_replace("/ /", '-', $filename);

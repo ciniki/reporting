@@ -67,7 +67,6 @@ function ciniki_reporting_reportPDF(&$ciniki) {
     // Check if the report is to be emailed
     //
     if( isset($args['email']) && $args['email'] == 'test' ) {
-        
         //
         // Get the users email
         //

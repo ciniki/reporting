@@ -29,7 +29,7 @@ function ciniki_reporting_reportRun($ciniki, $tnid, $report_id) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'reporting', 'private', 'reportExec');
     $rc = ciniki_reporting_reportExec($ciniki, $tnid, $report_id);
-    if( $rc['stat'] != 'ok' ) {
+    if( $rc['stat'] != 'ok' && $rc['stat'] != 'empty' ) {
         //
         // Email the error code and information, that way they know the report ran but there was a problem.
         //
@@ -43,6 +43,9 @@ function ciniki_reporting_reportRun($ciniki, $tnid, $report_id) {
         
     } else {
         $report = $rc['report'];
+        if( $rc['stat'] == 'empty' ) {
+            $report['empty'] = 'yes';
+        }
     }
 
     //
@@ -65,7 +68,10 @@ function ciniki_reporting_reportRun($ciniki, $tnid, $report_id) {
     //
     // Create the email 
     //
-    if( isset($report['text']) && $report['text'] != '' && isset($report['user_ids']) && count($report['user_ids']) > 0 ) {
+    if( !isset($report['empty']) 
+        && isset($report['text']) && $report['text'] != '' 
+        && isset($report['user_ids']) && count($report['user_ids']) > 0 
+        ) {
         $dt = new DateTime('now', new DateTimezone($intl_timezone));
         $filename = preg_replace("/[^0-9a-zA-Z ]/", "", $dt->format('Y M d') . ' ' . $report['title']);
         $filename = preg_replace("/ /", '-', $filename);

@@ -267,23 +267,43 @@ function ciniki_reporting_reportUpdate(&$ciniki) {
             $update_args['options'] = $new_options;
         }
         //
-        // Check for new title or sequence
+        // Check if this is a delete
         //
         if( isset($ciniki['request']['args']['block_' . $block['id'] . '_title']) 
-            && $ciniki['request']['args']['block_' . $block['id'] . '_title'] != $block['title'] 
+            && $ciniki['request']['args']['block_' . $block['id'] . '_title'] == ''
+            && isset($ciniki['request']['args']['block_' . $block['id'] . '_sequence']) 
+            && $ciniki['request']['args']['block_' . $block['id'] . '_sequence'] == ''
             ) {
-            $update_args['title'] = $ciniki['request']['args']['block_' . $block['id'] . '_title'];
-        }
-        if( isset($ciniki['request']['args']['block_' . $block['id'] . '_sequence']) 
-            && $ciniki['request']['args']['block_' . $block['id'] . '_sequence'] != $block['sequence'] 
-            ) {
-            $update_args['sequence'] = $ciniki['request']['args']['block_' . $block['id'] . '_sequence'];
-        }
-        if( count($update_args) > 0 ) {
-            $rc = ciniki_core_objectUpdate($ciniki, $args['tnid'], 'ciniki.reporting.reportblock', $block['id'], $update_args, 0x04);
+            error_log('detel');
+            $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.reporting.reportblock', $block['id'], null, 0x04);
             if( $rc['stat'] != 'ok' ) {
                 ciniki_core_dbTransactionRollback($ciniki, 'ciniki.reporting');
                 return $rc;
+            }
+        } 
+        //
+        // Check for updates
+        //
+        else {
+            //
+            // Check for new title or sequence
+            //
+            if( isset($ciniki['request']['args']['block_' . $block['id'] . '_title']) 
+                && $ciniki['request']['args']['block_' . $block['id'] . '_title'] != $block['title'] 
+                ) {
+                $update_args['title'] = $ciniki['request']['args']['block_' . $block['id'] . '_title'];
+            }
+            if( isset($ciniki['request']['args']['block_' . $block['id'] . '_sequence']) 
+                && $ciniki['request']['args']['block_' . $block['id'] . '_sequence'] != $block['sequence'] 
+                ) {
+                $update_args['sequence'] = $ciniki['request']['args']['block_' . $block['id'] . '_sequence'];
+            }
+            if( count($update_args) > 0 ) {
+                $rc = ciniki_core_objectUpdate($ciniki, $args['tnid'], 'ciniki.reporting.reportblock', $block['id'], $update_args, 0x04);
+                if( $rc['stat'] != 'ok' ) {
+                    ciniki_core_dbTransactionRollback($ciniki, 'ciniki.reporting');
+                    return $rc;
+                }
             }
         }
     }

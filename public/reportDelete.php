@@ -99,7 +99,7 @@ function ciniki_reporting_reportDelete(&$ciniki) {
     if( isset($rc['rows']) ) {
         $users = $rc['rows'];
         foreach($users as $user) {
-            $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.reporting.reportuser', $user['id'], $user['uuid'], 0x04);
+            $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.reporting.user', $user['id'], $user['uuid'], 0x04);
             if( $rc['stat'] != 'ok' ) {
                 ciniki_core_dbTransactionRollback($ciniki, 'ciniki.reporting');
                 return $rc;
@@ -122,7 +122,7 @@ function ciniki_reporting_reportDelete(&$ciniki) {
     if( isset($rc['rows']) ) {
         $blocks = $rc['rows'];
         foreach($blocks as $block) {
-            $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.reporting.reportblock', $block['id'], $block['uuid'], 0x04);
+            $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.reporting.block', $block['id'], $block['uuid'], 0x04);
             if( $rc['stat'] != 'ok' ) {
                 ciniki_core_dbTransactionRollback($ciniki, 'ciniki.reporting');
                 return $rc;

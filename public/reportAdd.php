@@ -106,7 +106,7 @@ function ciniki_reporting_reportAdd(&$ciniki) {
     if( isset($args['user_ids']) && is_array($args['user_ids']) ) {
         foreach($args['user_ids'] as $id) {
             if( in_array($id, $users) ) {
-                $rc = ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.reporting.reportuser', array(
+                $rc = ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.reporting.user', array(
                     'report_id'=>$report_id,
                     'user_id'=>$id,
                     ), 0x04);

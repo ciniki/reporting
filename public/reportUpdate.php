@@ -23,7 +23,8 @@ function ciniki_reporting_reportUpdate(&$ciniki) {
         'flags'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Options'),
         'next_date'=>array('required'=>'no', 'blank'=>'no', 'type'=>'date', 'name'=>'Next Date'),
         'next_time'=>array('required'=>'no', 'blank'=>'no', 'type'=>'time', 'name'=>'Next Time'),
-        'addblock'=>array('required'=>'no', 'blank'=>'no', 'name'=>'New Block'),
+//        'addblock'=>array('required'=>'no', 'blank'=>'no', 'name'=>'New Block'),
+//        'deleteblock'=>array('required'=>'no', 'blank'=>'no', 'name'=>'New Block'),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -103,7 +104,7 @@ function ciniki_reporting_reportUpdate(&$ciniki) {
         $dt = new DateTime("@" . $ts, new DateTimezone($intl_timezone));
         $args['next_date'] = $dt->format('Y-m-d H:i:s');
     }
-
+/*
     //
     // Get the list of available blocks
     //
@@ -121,7 +122,7 @@ function ciniki_reporting_reportUpdate(&$ciniki) {
             }
         }
     }
-
+*/
     //
     // Get the list of existing blocks to compare with new later
     //
@@ -216,7 +217,7 @@ function ciniki_reporting_reportUpdate(&$ciniki) {
         //
         foreach($args['user_ids'] as $user_id) {
             if( !in_array($user_id, $report_user_ids) ) {
-                $rc = ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.reporting.reportuser', array(
+                $rc = ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.reporting.user', array(
                     'report_id'=>$args['report_id'],
                     'user_id'=>$user_id, 
                     ), 0x04);
@@ -232,7 +233,7 @@ function ciniki_reporting_reportUpdate(&$ciniki) {
         //
         foreach($report_users as $user_id => $user) {
             if( !in_array($user_id, $args['user_ids']) ) {
-                $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.reporting.reportuser', $user['id'], $user['uuid'], 0x04);
+                $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.reporting.user', $user['id'], $user['uuid'], 0x04);
                 if( $rc['stat'] != 'ok' ) {
                     ciniki_core_dbTransactionRollback($ciniki, 'ciniki.reporting');
                     return $rc;
@@ -240,7 +241,7 @@ function ciniki_reporting_reportUpdate(&$ciniki) {
             }
         }
     }
-
+/*
     //
     // Check if block options need updating
     //
@@ -269,13 +270,14 @@ function ciniki_reporting_reportUpdate(&$ciniki) {
         //
         // Check if this is a delete
         //
-        if( isset($ciniki['request']['args']['block_' . $block['id'] . '_title']) 
+        if( (isset($ciniki['request']['args']['block_' . $block['id'] . '_title']) 
             && $ciniki['request']['args']['block_' . $block['id'] . '_title'] == ''
             && isset($ciniki['request']['args']['block_' . $block['id'] . '_sequence']) 
             && $ciniki['request']['args']['block_' . $block['id'] . '_sequence'] == ''
+            ) 
+            || (isset($args['delblock']) && 
             ) {
-            error_log('detel');
-            $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.reporting.reportblock', $block['id'], null, 0x04);
+            $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.reporting.block', $block['id'], null, 0x04);
             if( $rc['stat'] != 'ok' ) {
                 ciniki_core_dbTransactionRollback($ciniki, 'ciniki.reporting');
                 return $rc;
@@ -299,7 +301,7 @@ function ciniki_reporting_reportUpdate(&$ciniki) {
                 $update_args['sequence'] = $ciniki['request']['args']['block_' . $block['id'] . '_sequence'];
             }
             if( count($update_args) > 0 ) {
-                $rc = ciniki_core_objectUpdate($ciniki, $args['tnid'], 'ciniki.reporting.reportblock', $block['id'], $update_args, 0x04);
+                $rc = ciniki_core_objectUpdate($ciniki, $args['tnid'], 'ciniki.reporting.block', $block['id'], $update_args, 0x04);
                 if( $rc['stat'] != 'ok' ) {
                     ciniki_core_dbTransactionRollback($ciniki, 'ciniki.reporting');
                     return $rc;
@@ -307,7 +309,7 @@ function ciniki_reporting_reportUpdate(&$ciniki) {
             }
         }
     }
-
+*/
     //
     // Commit the transaction
     //

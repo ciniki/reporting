@@ -29,12 +29,12 @@ function ciniki_reporting_objects(&$ciniki) {
             ),
         'history_table'=>'ciniki_reporting_history',
         );
-    $objects['reportuser'] = array(
+    $objects['user'] = array(
         'name'=>'Report Users',
         'sync'=>'yes',
         'table'=>'ciniki_reporting_report_users',
-        'o_name'=>'reportuser',
-        'o_container'=>'reportusers',
+        'o_name'=>'user',
+        'o_container'=>'users',
         'fields'=>array(
             'report_id'=>array('name'=>'Report', 'ref'=>'ciniki.reporting.report'),
             'user_id'=>array('name'=>'User', 'ref'=>'ciniki.users.user'),
@@ -42,12 +42,12 @@ function ciniki_reporting_objects(&$ciniki) {
             ),
         'history_table'=>'ciniki_reporting_history',
         );
-    $objects['reportblock'] = array(
+    $objects['block'] = array(
         'name'=>'Report Blocks',
         'sync'=>'yes',
         'table'=>'ciniki_reporting_report_blocks',
-        'o_name'=>'reportblock',
-        'o_container'=>'reportblock',
+        'o_name'=>'block',
+        'o_container'=>'block',
         'fields'=>array(
             'report_id'=>array('name'=>'Report', 'ref'=>'ciniki.reporting.report'),
             'btype'=>array('name'=>'Block Type'),

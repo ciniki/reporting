@@ -112,7 +112,7 @@ function ciniki_reporting_reportGet($ciniki) {
             'options'=>serialize($options),
             );
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd'); 
-        $rc = ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.reporting.reportblock', $add_args, 0x07);
+        $rc = ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.reporting.block', $add_args, 0x07);
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }

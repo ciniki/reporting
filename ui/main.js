@@ -213,7 +213,7 @@ function ciniki_reporting_main() {
                 M.api.err(rsp);
                 return false;
             }
-            alert('Email sent');
+            M.alert('Email sent');
         });
     }
     this.report.save = function(cb) {
@@ -245,15 +245,15 @@ function ciniki_reporting_main() {
         }
     }
     this.report.remove = function() {
-        if( confirm('Are you sure you want to remove report?') ) {
-            M.api.getJSONCb('ciniki.reporting.reportDelete', {'tnid':M.curTenantID, 'report_id':this.report_id}, function(rsp) {
+        M.confirm('Are you sure you want to remove report?',null,function() {
+            M.api.getJSONCb('ciniki.reporting.reportDelete', {'tnid':M.curTenantID, 'report_id':M.ciniki_reporting_main.report.report_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
                 }
                 M.ciniki_reporting_main.report.close();
             });
-        }
+        });
     }
     this.report.nextButtonFn = function() {
         if( this.nplist != null && this.nplist.indexOf('' + this.report_id) < (this.nplist.length - 1) ) {
@@ -370,15 +370,15 @@ function ciniki_reporting_main() {
         }
     }
     this.block.remove = function() {
-        if( confirm('Are you sure you want to remove block?') ) {
-            M.api.getJSONCb('ciniki.reporting.blockDelete', {'tnid':M.curTenantID, 'block_id':this.block_id}, function(rsp) {
+        M.confirm('Are you sure you want to remove block?',null,function() {
+            M.api.getJSONCb('ciniki.reporting.blockDelete', {'tnid':M.curTenantID, 'block_id':M.ciniki_reporting_main.block.block_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
                 }
                 M.ciniki_reporting_main.block.close();
             });
-        }
+        });
     }
     this.block.nextButtonFn = function() {
         if( this.nplist != null && this.nplist.indexOf('' + this.block_id) < (this.nplist.length - 1) ) {
@@ -414,7 +414,7 @@ function ciniki_reporting_main() {
         //
         var ac = M.createContainer(ap, 'ciniki_reporting_main', 'yes');
         if( ac == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         }
         

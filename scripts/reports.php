@@ -20,6 +20,7 @@ require_once($ciniki_root . '/ciniki-mods/core/private/init.php');
 require_once($ciniki_root . '/ciniki-mods/core/private/checkModuleFlags.php');
 require_once($ciniki_root . '/ciniki-mods/core/private/dbHashQuery.php');
 require_once($ciniki_root . '/ciniki-mods/core/private/dbQuote.php');
+require_once($ciniki_root . '/ciniki-mods/core/private/dbQuoteIDs.php');
 require_once($ciniki_root . '/ciniki-mods/tenants/private/checkModuleAccess.php');
 require_once($ciniki_root . '/ciniki-mods/reporting/private/reportRun.php');
 

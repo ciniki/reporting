@@ -69,6 +69,7 @@ function ciniki_reporting_reportRun($ciniki, $tnid, $report_id) {
     // Create the email 
     //
     if( !isset($report['empty']) 
+        && isset($report['pdf']) 
         && isset($report['text']) && $report['text'] != '' 
         && isset($report['user_ids']) && count($report['user_ids']) > 0 
         ) {

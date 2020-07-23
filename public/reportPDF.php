@@ -95,7 +95,7 @@ function ciniki_reporting_reportPDF(&$ciniki) {
         $ciniki['emailqueue'][] = array('mail_id'=>$rc['id'], 'tnid'=>$args['tnid']);
         return array('stat'=>'ok');
     } else {
-        $report['pdf']->Output($filename . '.pdf', 'D');
+        $report['pdf']->Output($filename . '.pdf', 'I');
         return array('stat'=>'exit');
     }
 

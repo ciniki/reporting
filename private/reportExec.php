@@ -78,6 +78,8 @@ function ciniki_reporting_reportExec($ciniki, $tnid, $report_id) {
     $num_chunks = 0;
     foreach($report['blocks'] as $bid => $block) {
         if( isset($block['chunks']) ) { 
+        
+        error_log(print_r($block,true));
             $rc = ciniki_reporting_reportBlock($ciniki, $tnid, $report, $block);
             if( $rc['stat'] != 'ok' ) {
                 return array('stat'=>'fail', 'report'=>$report, 'err'=>array('code'=>'ciniki.reporting.16', 'msg'=>'Unable to add block', 'err'=>$rc['err']));

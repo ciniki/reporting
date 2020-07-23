@@ -71,7 +71,7 @@ function ciniki_reporting_main() {
     this.report.report_id = 0;
     this.report.nplist = [];
     this.report.sections = {
-        'general':{'label':'', 'aside':'yes', 'fields':{
+        'general':{'label':'Report Details', 'aside':'yes', 'fields':{
             'title':{'label':'Title', 'required':'yes', 'type':'text'},
             'frequency':{'label':'Frequency', 'required':'yes', 'default':'30', 'type':'toggle', 'toggles':{'10':'Daily', '30':'Weekly'}},
             }},
@@ -84,7 +84,7 @@ function ciniki_reporting_main() {
             }},
         '_buttons':{'label':'', 'aside':'yes', 'buttons':{
             'save':{'label':'Save', 'fn':'M.ciniki_reporting_main.report.save();'},
-            'pdf':{'label':'Download PDF', 'fn':'M.ciniki_reporting_main.report.downloadPDF();'},
+            'pdf':{'label':'Open PDF', 'fn':'M.ciniki_reporting_main.report.downloadPDF();'},
             'testemail':{'label':'Send Test Email', 'fn':'M.ciniki_reporting_main.report.save("M.ciniki_reporting_main.report.emailTestPDF();");'},
             'delete':{'label':'Delete', 'visible':function() {return M.ciniki_reporting_main.report.report_id>0?'yes':'no';}, 'fn':'M.ciniki_reporting_main.report.remove();'},
             }},
@@ -131,81 +131,13 @@ function ciniki_reporting_main() {
             var p = M.ciniki_reporting_main.report;
             p.data = rsp.report;
             p.sections._users.fields.user_ids.list = rsp.users;
-//            p.data.availableblocks = rsp.blocks;
-//            for(var i in p.data.availableblocks) {
-//                p.data.availableblocks[i].ref = i;
-//            }
-            // Setup the sections each time this is loaded
-//            p.sections = {
-/*                'general':{'label':'', 'aside':'yes', 'fields':{
-                    'title':{'label':'Title', 'required':'yes', 'type':'text'},
-                    'frequency':{'label':'Frequency', 'required':'yes', 'default':'30', 'type':'toggle', 'toggles':{'10':'Daily', '30':'Weekly'}},
-                    }},
-                '_next':{'label':'Next Run', 'aside':'yes', 'fields':{
-                    'next_date':{'label':'Date', 'required':'yes', 'type':'date'},
-                    'next_time':{'label':'Time', 'required':'yes', 'type':'text', 'size':'small'},
-                    }},
-                '_users':{'label':'Users', 'aside':'yes', 'fields':{
-                    'user_ids':{'label':'', 'hidelabel':'yes', 'type':'idlist', 'list':rsp.users},
-                    }},
-                '_buttons':{'label':'', 'aside':'yes', 'buttons':{
-                    'save':{'label':'Save', 'fn':'M.ciniki_reporting_main.report.save();'},
-                    'pdf':{'label':'Download PDF', 'fn':'M.ciniki_reporting_main.report.downloadPDF();'},
-                    'testemail':{'label':'Send Test Email', 'fn':'M.ciniki_reporting_main.report.save("M.ciniki_reporting_main.report.emailTestPDF();");'},
-                    'delete':{'label':'Delete', 'visible':function() {return M.ciniki_reporting_main.report.report_id>0?'yes':'no';}, 'fn':'M.ciniki_reporting_main.report.remove();'},
-                    }},
-                'blocks':{'label':'Report Sections', 'type':'simplegrid', 'num_cols':1,
-                    'addTxt':'Add Section',
-                    'addFn':'M.ciniki_reporting_main.report.save(\'M.ciniki_reporting_main.report.addblock();\');',
-                }; */
-            // 
-            // Setup the blocks and their options to be edited
-            //
-/*            p.num_blocks = 0;
-            if( rsp.report.blocks != null ) {
-                var c = 0;
-                for(var i in rsp.report.blocks) {
-                    if( rsp.blocks[rsp.report.blocks[i].block_ref] != null ) {
-                        var b = rsp.blocks[rsp.report.blocks[i].block_ref];
-                        var bid = 'block_' + rsp.report.blocks[i].id;
-                        p.sections[bid] = {'label':'', 'field_id':rsp.report.blocks[i].id, 'fields':{}};
-                        //
-                        // Add the title and sequence fields
-                        //
-                        p.sections[bid].fields[bid + '_title'] = {'label':'Title', 'type':'text'};
-                        p.data[bid + '_title'] = rsp.report.blocks[i].title;
-                        p.sections[bid].fields[bid + '_sequence'] = {'label':'Order', 'type':'text', 'size':'small'};
-                        p.data[bid + '_sequence'] = rsp.report.blocks[i].sequence;
-                        for(var j in b.options) {
-                            //
-                            // Add the field to the section
-                            //
-                            p.sections[bid].fields[bid + '_' + j] = b.options[j];
-                            //
-                            // Setup the data values for this option
-                            //
-                            if( rsp.report.blocks[i].options[j] != null ) {
-                                p.data[bid + '_' + j] = rsp.report.blocks[i].options[j];
-                            } else {
-                                p.data[bid + '_' + j] = '';
-                            }
-                        }
-                        c++;
-                    }
-                }
-                p.num_blocks = c;
-            }
-            p.sections['availableblocks'] = {'label':'Add more sections', 'type':'simplegrid', 'num_cols':2, 
-                'cellClasses':['', 'multiline alignright'],
-                };
-*/
             p.refresh();
             p.show(cb);
         });
     }
     this.report.downloadPDF = function() {
         //this.save("M.api.openPDF('ciniki.reporting.reportPDF', {'tnid':" + M.curTenantID + ", 'report_id':" + this.report_id + "});");
-        this.save("M.api.openFile('ciniki.reporting.reportPDF', {'tnid':" + M.curTenantID + ", 'report_id':" + this.report_id + "});");
+        this.save("M.api.openPDF('ciniki.reporting.reportPDF', {'tnid':" + M.curTenantID + ", 'report_id':" + this.report_id + "});");
     }
     this.report.emailTestPDF = function() {
         M.api.getJSONCb('ciniki.reporting.reportPDF', {'tnid':M.curTenantID, 'report_id':this.report_id, 'email':'test'}, function(rsp) {
@@ -289,7 +221,7 @@ function ciniki_reporting_main() {
             'block_title':{'label':'Title', 'type':'text'},
             'block_sequence':{'label':'Order', 'required':'yes', 'type':'text'},
             }},
-        '_options':{'label':'Options', 'fields':{
+        '_options':{'label':'Options', 'visible':'hidden', 'fields':{
             }},
         '_buttons':{'label':'', 'buttons':{
             'save':{'label':'Save', 'fn':'M.ciniki_reporting_main.block.save();'},
@@ -300,7 +232,6 @@ function ciniki_reporting_main() {
         };
     this.block.fieldValue = function(s, i, d) { 
         if( s == '_options' ) {
-            console.log(this.data);
             return this.data.options[i];
         }
         return this.data[i]; 
@@ -312,7 +243,11 @@ function ciniki_reporting_main() {
         this.sections._options.visible = 'hidden';
         this.sections._options.fields = {};
         var block_ref = this.formValue('block_ref');
-        if( this.data.availableblocks[block_ref] != null ) {
+        if( this.data.availableblocks[block_ref] != null 
+            && this.data.availableblocks[block_ref].options != null 
+            && JSON.stringify(this.data.availableblocks[block_ref].options)!=JSON.stringify({})
+            && JSON.stringify(this.data.availableblocks[block_ref].options)!=JSON.stringify([])
+            ) {
             this.sections._options.fields = this.data.availableblocks[block_ref].options;
             this.sections._options.visible = 'yes';
         }

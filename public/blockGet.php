@@ -119,6 +119,13 @@ function ciniki_reporting_blockGet($ciniki) {
         }
     }
 
+    uasort($rsp['availableblocks'], function($a, $b) {
+        if( $a['module'] == $b['module'] ) {
+            return strcmp($a['name'], $b['name']);
+        }
+        return strcmp($a['module'], $b['module']);
+        });
+
     return $rsp;
 }
 ?>

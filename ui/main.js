@@ -309,7 +309,6 @@ function ciniki_reporting_main() {
         return {'method':'ciniki.reporting.blockHistory', 'args':{'tnid':M.curTenantID, 'block_id':this.block_id, 'field':i}};
     }
     this.block.setBlockOptions = function() {
-        console.log('test');
         this.sections._options.visible = 'hidden';
         this.sections._options.fields = {};
         var block_ref = this.formValue('block_ref');
@@ -334,7 +333,7 @@ function ciniki_reporting_main() {
             p.data.availableblocks = rsp.availableblocks;
             p.sections.general.fields.block_ref.options = [];
             for(var i in rsp.availableblocks) {
-                p.sections.general.fields.block_ref.options[i] = rsp.availableblocks[i].name;
+                p.sections.general.fields.block_ref.options[i] = rsp.availableblocks[i].module + ' - ' + rsp.availableblocks[i].name;
             }
             p.refresh();
             p.show(cb);

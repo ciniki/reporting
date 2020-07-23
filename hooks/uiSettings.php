@@ -22,6 +22,10 @@ function ciniki_reporting_hooks_uiSettings(&$ciniki, $tnid, $args) {
     //
     // Check permissions for what menu items should be available
     //
+    // **NOTE**: This module is only available to owners. Reports could have
+    //           sensitive data about employee tracking that other employees should
+    //           not get access to!
+    //
     if( isset($ciniki['tenant']['modules']['ciniki.reporting'])
         && (isset($args['permissions']['owners'])
             || isset($args['permissions']['resellers'])

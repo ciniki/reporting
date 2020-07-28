@@ -23,7 +23,7 @@ function ciniki_reporting_objects(&$ciniki) {
         'o_container'=>'reports',
         'fields'=>array(
             'title'=>array('name'=>'Title'),
-            'category'=>array('name'=>'Category'),
+            'category'=>array('name'=>'Category', 'default'=>''),
             'frequency'=>array('name'=>'Frequency'),
             'flags'=>array('name'=>'Options', 'default'=>0x03),
             'skip_days'=>array('name'=>'Skip Days', 'default'=>0),

@@ -61,19 +61,29 @@ function ciniki_reporting_reportList($ciniki) {
     //
     // Get the list of reports
     //
-    $strsql = "SELECT r.id, "
-        . "r.title, "
-        . "r.frequency, "
-        . "r.frequency AS frequency_text, "
-        . "r.flags, "
-        . "r.next_date "
-        . "FROM ciniki_reporting_reports AS r "
-        . "WHERE r.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+    $strsql = "SELECT reports.id, "
+        . "reports.title, "
+        . "reports.frequency, "
+        . "reports.frequency AS frequency_text, "
+        . "reports.flags, "
+        . "reports.next_date, "
+        . "IFNULL(users.display_name, '') AS userlist "
+        . "FROM ciniki_reporting_reports AS reports "
+        . "LEFT JOIN ciniki_reporting_report_users AS u1 ON ("
+            . "reports.id = u1.report_id "
+            . "AND u1.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+            . ") "
+        . "LEFT JOIN ciniki_users AS users ON ("
+            . "u1.user_id = users.id "
+            . ") "
+        . "WHERE reports.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+        . "ORDER BY reports.next_date, users.display_name "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.reporting', array(
         array('container'=>'reports', 'fname'=>'id', 
-            'fields'=>array('id', 'title', 'frequency', 'frequency_text', 'flags', 'next_date'),
+            'fields'=>array('id', 'title', 'frequency', 'frequency_text', 'flags', 'next_date', 'userlist'),
+            'dlists'=>array('userlist'=>', '),
             'maps'=>array('frequency_text'=>$maps['report']['frequency']),
             'utctotz'=>array('next_date'=>array('format'=>$datetime_format, 'timezone'=>$intl_timezone)),
             ),

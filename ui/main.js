@@ -5,7 +5,7 @@ function ciniki_reporting_main() {
     //
     // The panel to list the report
     //
-    this.menu = new M.panel('report', 'ciniki_reporting_main', 'menu', 'mc', 'medium', 'sectioned', 'ciniki.reporting.main.menu');
+    this.menu = new M.panel('Reports', 'ciniki_reporting_main', 'menu', 'mc', 'medium', 'sectioned', 'ciniki.reporting.main.menu');
     this.menu.data = {};
     this.menu.nplist = [];
     this.menu.sections = {
@@ -15,8 +15,10 @@ function ciniki_reporting_main() {
 //            'noData':'No report found',
 //            },
         'reports':{'label':'Reports', 'type':'simplegrid', 'num_cols':4,
-            'headerValues':['Title', 'Frequency', 'Next Date'],
+            'headerValues':['Title', 'Frequency', 'Next Date', 'Recipients'],
             'noData':'No report',
+            'sortable':'yes',
+            'sortTypes':['text', 'text', 'date', 'text'],
             'addTxt':'Add Report',
             'addFn':'M.ciniki_reporting_main.report.open(\'M.ciniki_reporting_main.menu.open();\',0,null);'
             },
@@ -40,6 +42,7 @@ function ciniki_reporting_main() {
                 case 0: return d.title;
                 case 1: return d.frequency_text;
                 case 2: return d.next_date;
+                case 3: return d.userlist;
             }
         }
     }

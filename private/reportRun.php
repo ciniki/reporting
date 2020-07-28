@@ -51,7 +51,9 @@ function ciniki_reporting_reportRun($ciniki, $tnid, $report_id) {
     //
     // Update the next run for the report
     //
+    $today = new DateTime('now', new DateTimezone('UTC'));
     $dt = new DateTime($report['next_dt'], new DateTimezone('UTC'));
+
     //
     // Check if email should be skipped
     //
@@ -61,6 +63,11 @@ function ciniki_reporting_reportRun($ciniki, $tnid, $report_id) {
     }
     if( isset($report['frequency']) && $report['frequency'] == 10 ) {
         $dt->add(new DateInterval('P1D'));
+        // Check if date is long in the past, and advance to tomorrow
+        if( $dt < $today ) {
+            $dt->setDate($today->format('Y'), $today->format('n'), $today->format('j'));
+            $dt->add(new DateInterval('P1D'));
+        }
         if( $report['skip_days'] > 0 ) {
             $count = 0;
             while( $count < 7 && ($report['skip_days']&pow(2, ($dt->format('N')-1))) > 0 ) {

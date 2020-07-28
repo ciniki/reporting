@@ -77,7 +77,7 @@ function ciniki_reporting_reportList($ciniki) {
             . "u1.user_id = users.id "
             . ") "
         . "WHERE reports.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
-        . "ORDER BY reports.next_date, users.display_name "
+        . "ORDER BY reports.next_date, reports.title, reports.id, users.display_name "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.reporting', array(

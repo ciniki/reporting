@@ -5,38 +5,20 @@ function ciniki_reporting_main() {
     //
     // The panel to list the report
     //
-    this.menu = new M.panel('Reports', 'ciniki_reporting_main', 'menu', 'mc', 'medium', 'sectioned', 'ciniki.reporting.main.menu');
-    this.menu.data = {};
-    this.menu.nplist = [];
-    this.menu.sections = {
-//        'search':{'label':'', 'type':'livesearchgrid', 'livesearchcols':1,
-//            'cellClasses':[''],
-//            'hint':'Search report',
-//            'noData':'No report found',
-//            },
+    this.schedule = new M.panel('Report Schedule', 'ciniki_reporting_main', 'schedule', 'mc', 'medium', 'sectioned', 'ciniki.reporting.main.schedule');
+    this.schedule.data = {};
+    this.schedule.nplist = [];
+    this.schedule.sections = {
         'reports':{'label':'Reports', 'type':'simplegrid', 'num_cols':4,
             'headerValues':['Title', 'Frequency', 'Next Date', 'Recipients'],
             'noData':'No report',
             'sortable':'yes',
             'sortTypes':['text', 'text', 'date', 'text'],
             'addTxt':'Add Report',
-            'addFn':'M.ciniki_reporting_main.report.open(\'M.ciniki_reporting_main.menu.open();\',0,null);'
+            'addFn':'M.ciniki_reporting_main.report.open(\'M.ciniki_reporting_main.schedule.open();\',0,null);'
             },
     }
-/*    this.menu.liveSearchCb = function(s, i, v) {
-        if( s == 'search' && v != '' ) {
-            M.api.getJSONBgCb('ciniki.reporting.reportSearch', {'tnid':M.curTenantID, 'start_needle':v, 'limit':'25'}, function(rsp) {
-                M.ciniki_reporting_main.menu.liveSearchShow('search',null,M.gE(M.ciniki_reporting_main.menu.panelUID + '_' + s), rsp.reports);
-                });
-        }
-    }
-    this.menu.liveSearchResultValue = function(s, f, i, j, d) {
-        return d.name;
-    }
-    this.menu.liveSearchResultRowFn = function(s, f, i, j, d) {
-        return 'M.ciniki_reporting_main.report.open(\'M.ciniki_reporting_main.menu.open();\',\'' + d.id + '\');';
-    } */
-    this.menu.cellValue = function(s, i, j, d) {
+    this.schedule.cellValue = function(s, i, j, d) {
         if( s == 'reports' ) {
             switch(j) {
                 case 0: return d.title;
@@ -46,25 +28,128 @@ function ciniki_reporting_main() {
             }
         }
     }
-    this.menu.rowFn = function(s, i, d) {
+    this.schedule.rowFn = function(s, i, d) {
         if( s == 'reports' ) {
-            return 'M.ciniki_reporting_main.report.open(\'M.ciniki_reporting_main.menu.open();\',\'' + d.id + '\',M.ciniki_reporting_main.report.nplist);';
+            return 'M.ciniki_reporting_main.report.open(\'M.ciniki_reporting_main.schedule.open();\',\'' + d.id + '\',M.ciniki_reporting_main.report.nplist);';
         }
     }
-    this.menu.open = function(cb) {
+    this.schedule.open = function(cb) {
         M.api.getJSONCb('ciniki.reporting.reportList', {'tnid':M.curTenantID}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
             }
-            var p = M.ciniki_reporting_main.menu;
+            var p = M.ciniki_reporting_main.schedule;
             p.data = rsp;
             p.nplist = (rsp.nplist != null ? rsp.nplist : null);
             p.refresh();
             p.show(cb);
         });
     }
-    this.menu.addClose('Back');
+    this.schedule.addClose('Back');
+
+    //
+    // The panel to list the report
+    //
+    this.categories = new M.panel('Reports', 'ciniki_reporting_main', 'categories', 'mc', 'xlarge narrowaside', 'sectioned', 'ciniki.reporting.main.categories');
+    this.categories.data = {};
+    this.categories.nplist = [];
+    this.categories.sections = {}
+    this.categories.report_id = 0;
+    this.categories.cellValue = function(s, i, j, d) {
+        if( this.sections[s].cvtype == 'category' ) {
+            return d.title;
+        }
+        else if( this.sections[s].cvtype = 'chunk' ) {
+            if( d[this.sections[s].dataMaps[j]] != null ) {
+                return d[this.sections[s].dataMaps[j]].replace(/\n/g, '<br/>');
+            }
+        }
+        return '';
+    }
+    this.categories.rowClass = function(s, i, d) {
+        if( this.sections[s].cvtype == 'category' && d.id == this.report_id ) {
+            return 'highlight';
+        }
+        return '';
+    }
+    this.categories.rowFn = function(s, i, d) {
+        if( this.sections[s].cvtype == 'category' ) {
+            return 'M.ciniki_reporting_main.categories.open(null,\'' + d.id + '\');';
+        }
+        return '';
+    }
+    this.categories.openDataApp = function(s, i) {
+        var args = {};
+        var d = this.data[s][i];
+        if( this.sections[s].editApp.args != null ) {
+            for(var j in this.sections[s].editApp.args) {
+                args[j] = eval(this.sections[s].editApp.args[j]);
+            }
+        }
+        M.startApp(this.sections[s].editApp.app,null,'M.ciniki_reporting_main.categories.open();','mc',args);
+    }
+    this.categories.open = function(cb,rid) {
+        if( rid != null ) { this.report_id = rid; }
+        M.api.getJSONCb('ciniki.reporting.categories', {'tnid':M.curTenantID, 'report_id':this.report_id}, function(rsp) {
+            if( rsp.stat != 'ok' ) {
+                M.api.err(rsp);
+                return false;
+            }
+            var p = M.ciniki_reporting_main.categories;
+            p.data = {};
+            p.sections = {};
+            for(var i in rsp.categories) {
+                p.sections['category_' + i] = {'label':rsp.categories[i].name, 
+                    'type':'simplegrid', 'aside':'yes', 'num_cols':1,
+                    'cvtype':'category',
+                    };
+                p.data['category_' + i] = rsp.categories[i].reports;
+            }
+            if( p.report_id > 0 && rsp.report != null ) {
+                var nc = 0;
+                for(var i in rsp.report.blocks) {
+                    var title = rsp.report.blocks[i].title;
+                    for(var j in rsp.report.blocks[i].chunks) {
+                        var chunk = rsp.report.blocks[i].chunks[j];
+                        if( chunk.type == 'message' ) {
+                            p.sections['chunk_' + nc] = {'label':title,
+                                'type':'html', 
+                                'cvtype':'chunk',
+                                };
+                            p.data['chunk_' + nc] = chunk.content;
+
+                        } else if( chunk.type == 'table' ) {
+                            p.sections['chunk_' + nc] = {'label':title + (chunk.title != null && chunk.title != '' ? (title != '' ? ' - ' : '') + chunk.title : ''),
+                                'type':'simplegrid', 'num_cols':chunk.columns.length,
+                                'cvtype':'chunk',
+                                'sct':'chunk_'+nc,
+                                'headerValues':[],
+                                'dataMaps':[],
+                                };
+                            for(var k in chunk.columns) {
+                                p.sections['chunk_' + nc].headerValues[k] = chunk.columns[k].label;
+                                p.sections['chunk_' + nc].dataMaps[k] = chunk.columns[k].field;
+                            }
+                            if( chunk.editApp != null ) {
+                                p.sections['chunk_' + nc].editApp = chunk.editApp;
+                                p.sections['chunk_' + nc].rowFn = function(i, d) {
+                                    return 'M.ciniki_reporting_main.categories.openDataApp(\'' + this.sct + '\',\'' + i + '\');';
+                                    };
+                            }
+                            p.data['chunk_' + nc] = chunk.data;
+                        }
+                        title = '';
+                        nc++;
+                    }
+                }
+            }
+            p.refresh();
+            p.show(cb);
+        });
+    }
+    this.categories.addButton('mwcalendar', 'Schedule', 'M.ciniki_reporting_main.schedule.open(\'M.ciniki_reporting_main.categories.open();\');');
+    this.categories.addClose('Back');
 
     //
     // The panel to edit Reports
@@ -366,7 +451,11 @@ function ciniki_reporting_main() {
             M.alert('App Error');
             return false;
         }
-        
-        this.menu.open(cb);
+       
+        if( M.modFlagOn('ciniki.reporting', 0x01) ) {
+            this.categories.open(cb);
+        } else {
+            this.schedule.open(cb);
+        }
     }
 }

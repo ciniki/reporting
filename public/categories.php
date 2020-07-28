@@ -13,13 +13,14 @@
 // Returns
 // -------
 //
-function ciniki_reporting_reportList($ciniki) {
+function ciniki_reporting_categories($ciniki) {
     //
     // Find all the required and optional arguments
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'),
+        'report_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Report'),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -30,7 +31,7 @@ function ciniki_reporting_reportList($ciniki) {
     // Check access to tnid as owner, or sys admin.
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'reporting', 'private', 'checkAccess');
-    $rc = ciniki_reporting_checkAccess($ciniki, $args['tnid'], 'ciniki.reporting.reportList');
+    $rc = ciniki_reporting_checkAccess($ciniki, $args['tnid'], 'ciniki.reporting.categories');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -62,47 +63,41 @@ function ciniki_reporting_reportList($ciniki) {
     // Get the list of reports
     //
     $strsql = "SELECT reports.id, "
+        . "IF(reports.category='', 'Uncategorized', reports.category) AS category, "
         . "reports.title, "
-        . "reports.category, "
         . "reports.frequency, "
-        . "reports.frequency AS frequency_text, "
         . "reports.flags, "
-        . "reports.next_date, "
-        . "IFNULL(users.display_name, '') AS userlist "
+        . "reports.next_date "
         . "FROM ciniki_reporting_reports AS reports "
-        . "LEFT JOIN ciniki_reporting_report_users AS u1 ON ("
-            . "reports.id = u1.report_id "
-            . "AND u1.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
-            . ") "
-        . "LEFT JOIN ciniki_users AS users ON ("
-            . "u1.user_id = users.id "
-            . ") "
         . "WHERE reports.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
-        . "ORDER BY reports.next_date, reports.category, reports.title, reports.id, users.display_name "
+        . "ORDER BY category, reports.title "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.reporting', array(
+        array('container'=>'categories', 'fname'=>'category', 'fields'=>array('name'=>'category')),
         array('container'=>'reports', 'fname'=>'id', 
-            'fields'=>array('id', 'category', 'title', 'frequency', 'frequency_text', 'flags', 'next_date', 'userlist'),
-            'dlists'=>array('userlist'=>', '),
-            'maps'=>array('frequency_text'=>$maps['report']['frequency']),
-            'utctotz'=>array('next_date'=>array('format'=>$datetime_format, 'timezone'=>$intl_timezone)),
+            'fields'=>array('id', 'category', 'title', 'frequency', 'flags', 'next_date'),
             ),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
-    if( isset($rc['reports']) ) {
-        $reports = $rc['reports'];
-        $report_ids = array();
-        foreach($reports as $iid => $report) {
-            $report_ids[] = $report['id'];
+    $categories = isset($rc['categories']) ? $rc['categories'] : array();
+    
+    $rsp = array('stat'=>'ok', 'categories'=>$categories);
+
+    //
+    // Load the report if specified
+    //
+    if( isset($args['report_id']) && $args['report_id'] > 0 ) {
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'reporting', 'private', 'reportExec');
+        $rc = ciniki_reporting_reportExec($ciniki, $args['tnid'], $args['report_id']);
+        if( $rc['stat'] != 'ok' ) {
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.reporting.27', 'msg'=>'Unable to execute report', 'err'=>$rc['err']));
         }
-    } else {
-        $reports = array();
-        $report_ids = array();
+        $rsp['report'] = $rc['report'];
     }
 
-    return array('stat'=>'ok', 'reports'=>$reports, 'nplist'=>$report_ids);
+    return $rsp;
 }
 ?>

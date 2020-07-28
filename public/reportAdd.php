@@ -22,8 +22,10 @@ function ciniki_reporting_reportAdd(&$ciniki) {
         'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'),
         'user_ids'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'idlist', 'name'=>'Users'),
         'title'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Title'),
+        'category'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Category'),
         'frequency'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Frequency'),
         'flags'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Options'),
+        'skip_days'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Skip Days'),
         'next_date'=>array('required'=>'yes', 'blank'=>'no', 'type'=>'date', 'name'=>'Next Date'),
         'next_time'=>array('required'=>'yes', 'blank'=>'no', 'type'=>'time', 'name'=>'Next Time'),
         ));

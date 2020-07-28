@@ -36,8 +36,10 @@ function ciniki_reporting_reportLoad($ciniki, $tnid, $report_id) {
     //
     $strsql = "SELECT ciniki_reporting_reports.id, "
         . "ciniki_reporting_reports.title, "
+        . "ciniki_reporting_reports.category, "
         . "ciniki_reporting_reports.frequency, "
         . "ciniki_reporting_reports.flags, "
+        . "ciniki_reporting_reports.skip_days, "
         . "ciniki_reporting_reports.next_date AS next_dt, "
         . "ciniki_reporting_reports.next_date, "
         . "ciniki_reporting_reports.next_date AS next_time "
@@ -48,7 +50,9 @@ function ciniki_reporting_reportLoad($ciniki, $tnid, $report_id) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.reporting', array(
         array('container'=>'reports', 'fname'=>'id', 
-            'fields'=>array('id', 'title', 'frequency', 'flags', 'next_dt', 'next_date', 'next_time'),
+            'fields'=>array('id', 'title', 'category', 'frequency', 'flags', 'skip_days',
+                'next_dt', 'next_date', 'next_time',
+                ),
             'utctotz'=>array(   
                 'next_date'=>array('format'=>$date_format, 'timezone'=>$intl_timezone),
                 'next_time'=>array('format'=>$time_format, 'timezone'=>$intl_timezone),

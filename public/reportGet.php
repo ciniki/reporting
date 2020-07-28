@@ -125,10 +125,12 @@ function ciniki_reporting_reportGet($ciniki) {
         $rsp['report'] = array('id'=>0,
             'user_ids'=>array(),
             'title'=>'',
+            'category'=>'',
             'frequency'=>'',
             'flags'=>0x03,
             'next_date'=>'',
             'next_time'=>'',
+            'skip_days'=>0,
             'blocks'=>array(),
         );
     }

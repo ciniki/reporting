@@ -52,11 +52,25 @@ function ciniki_reporting_reportRun($ciniki, $tnid, $report_id) {
     // Update the next run for the report
     //
     $dt = new DateTime($report['next_dt'], new DateTimezone('UTC'));
-    if( $report['frequency'] == 10 ) {
+    //
+    // Check if email should be skipped
+    //
+    $skip_today = 'no';
+    if( isset($report['skip_days']) && ($report['skip_days']&pow(2, ($dt->format('N')-1))) > 0 ) {
+        $skip_today = 'yes';
+    }
+    if( isset($report['frequency']) && $report['frequency'] == 10 ) {
         $dt->add(new DateInterval('P1D'));
-    } elseif( $report['frequency'] == 30 ) {
+        if( $report['skip_days'] > 0 ) {
+            $count = 0;
+            while( $count < 7 && ($report['skip_days']&pow(2, ($dt->format('N')-1))) > 0 ) {
+                $dt->add(new DateInterval('P1D'));
+                $count++;
+            }
+        }
+    } elseif( isset($report['frequency']) && $report['frequency'] == 30 ) {
         $dt->add(new DateInterval('P7D'));
-    } elseif( $report['frequency'] == 50 ) {
+    } elseif( isset($report['frequency']) && $report['frequency'] == 50 ) {
         $dt->add(new DateInterval('P1M'));
     }
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
@@ -65,10 +79,12 @@ function ciniki_reporting_reportRun($ciniki, $tnid, $report_id) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.reporting.18', 'msg'=>'Unable to update the next run time', 'err'=>$rc['err']));
     }
 
+
     //
     // Create the email 
     //
-    if( !isset($report['empty']) 
+    if( $skip_today == 'no'
+        && !isset($report['empty']) 
         && isset($report['pdf']) 
         && isset($report['text']) && $report['text'] != '' 
         && isset($report['user_ids']) && count($report['user_ids']) > 0 

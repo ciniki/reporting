@@ -11,6 +11,7 @@
 # tnid:             The ID of the tenant.
 #
 # title:            The title for the report.
+# category:         The category for the report, if enabled as module flag.
 # frequency:        The interval to send the reports
 #
 #                       10 - Daily
@@ -24,6 +25,16 @@
 #                       0x04 - Excel Attachment, include all blocks in the Excel File **future**.
 #                       0x08 -
 #
+# skip_days:        The days of the week to skip
+#
+#                       0x01 - Monday
+#                       0x02 - Tuesday
+#                       0x04 - Wednesday
+#                       0x08 - Thursday
+#                       0x10 - Friday
+#                       0x20 - Saturday
+#                       0x40 - Sunday
+#
 # next_date:        The UTC date and time to next send the report.
 #
 # date_added:       The UTC date and time the record was created.
@@ -34,8 +45,10 @@ create table ciniki_reporting_reports (
     uuid char(36) not null,
     tnid int not null,
     title varchar(250) not null,
+    category varchar(150) not null,
     frequency tinyint unsigned not null,
     flags smallint unsigned not null,
+    skip_days tinyint unsigned not null,
     next_date datetime not null,
     date_added datetime not null,
     last_updated datetime not null,
@@ -43,4 +56,4 @@ create table ciniki_reporting_reports (
     unique index (uuid),
     unique index (tnid, title),
     index sync (tnid, uuid, last_updated)
-) ENGINE=InnoDB, COMMENT='v1.01';
+) ENGINE=InnoDB, COMMENT='v1.02';

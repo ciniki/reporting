@@ -1,0 +1,6 @@
+#
+# Add the skip_days field to the reports table
+#
+ALTER TABLE ciniki_reporting_reports ADD COLUMN category varchar(150) not null AFTER title;
+ALTER TABLE ciniki_reporting_reports ADD COLUMN skip_days tinyint unsigned not null AFTER flags;
+ALTER TABLE ciniki_reporting_reports COMMENT='v1.02';

@@ -73,11 +73,23 @@ function ciniki_reporting_main() {
     this.report.sections = {
         'general':{'label':'Report Details', 'aside':'yes', 'fields':{
             'title':{'label':'Title', 'required':'yes', 'type':'text'},
+            'category':{'label':'Category', 'type':'text',
+                'active':function() { return M.modFlagSet('ciniki.reporting', 0x01); },
+                },
             'frequency':{'label':'Frequency', 'required':'yes', 'default':'30', 'type':'toggle', 'toggles':{'10':'Daily', '30':'Weekly'}},
             }},
         '_next':{'label':'Next Run', 'aside':'yes', 'fields':{
             'next_date':{'label':'Date', 'required':'yes', 'type':'date'},
             'next_time':{'label':'Time', 'required':'yes', 'type':'text', 'size':'small'},
+            'skip_days':{'label':'Skip', 'type':'flags', 'flags':{
+                '1':{'name':'Mon'}, 
+                '2':{'name':'Tue'},
+                '3':{'name':'Wed'},
+                '4':{'name':'Thu'},
+                '5':{'name':'Fri'},
+                '6':{'name':'Sat'},
+                '7':{'name':'Sun'},
+                }},
             }},
         '_users':{'label':'Users', 'aside':'yes', 'fields':{
             'user_ids':{'label':'', 'hidelabel':'yes', 'type':'idlist', 'list':[]},

@@ -34,6 +34,7 @@ if( $rc['stat'] != 'ok' ) {
 // Setup the $ciniki variable to hold all things ciniki.  
 //
 $ciniki = $rc['ciniki'];
+$ciniki['session']['user']['id'] = -3; // Setup to Ciniki Robot
 
 //
 // Load the list of reports to run

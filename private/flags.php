@@ -16,7 +16,7 @@ function ciniki_reporting_flags(&$ciniki) {
     //
     $flags = array(
         // 0x01
-//        array('flag'=>array('bit'=>'1', 'name'=>'')),
+        array('flag'=>array('bit'=>'1', 'name'=>'Categories')),
 //        array('flag'=>array('bit'=>'2', 'name'=>'')),
 //        array('flag'=>array('bit'=>'3', 'name'=>'')),
 //        array('flag'=>array('bit'=>'4', 'name'=>'')),

@@ -19,8 +19,10 @@ function ciniki_reporting_reportUpdate(&$ciniki) {
         'report_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Reports'),
         'user_ids'=>array('required'=>'no', 'blank'=>'no', 'type'=>'idlist', 'name'=>'Users'),
         'title'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Title'),
+        'category'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Category'),
         'frequency'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Frequency'),
         'flags'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Options'),
+        'skip_days'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Skip Days'),
         'next_date'=>array('required'=>'no', 'blank'=>'no', 'type'=>'date', 'name'=>'Next Date'),
         'next_time'=>array('required'=>'no', 'blank'=>'no', 'type'=>'time', 'name'=>'Next Time'),
 //        'addblock'=>array('required'=>'no', 'blank'=>'no', 'name'=>'New Block'),
@@ -56,8 +58,10 @@ function ciniki_reporting_reportUpdate(&$ciniki) {
     //
     $strsql = "SELECT ciniki_reporting_reports.id, "
         . "ciniki_reporting_reports.title, "
+        . "ciniki_reporting_reports.category, "
         . "ciniki_reporting_reports.frequency, "
         . "ciniki_reporting_reports.flags, "
+        . "ciniki_reporting_reports.skip_days, "
         . "ciniki_reporting_reports.next_date, "
         . "ciniki_reporting_reports.next_date AS next_time "
         . "FROM ciniki_reporting_reports "
@@ -67,7 +71,7 @@ function ciniki_reporting_reportUpdate(&$ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.reporting', array(
         array('container'=>'reports', 'fname'=>'id', 
-            'fields'=>array('id', 'title', 'frequency', 'flags', 'next_date', 'next_time'),
+            'fields'=>array('id', 'title', 'category', 'frequency', 'flags', 'skip_days', 'next_date', 'next_time'),
             'utctotz'=>array(
                 'next_date'=>array('format'=>'Y-m-d', 'timezone'=>$intl_timezone),
                 'next_time'=>array('format'=>'H:i:s', 'timezone'=>$intl_timezone),

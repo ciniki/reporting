@@ -161,7 +161,7 @@ function ciniki_reporting_main() {
     this.report.sections = {
         'general':{'label':'Report Details', 'aside':'yes', 'fields':{
             'title':{'label':'Title', 'required':'yes', 'type':'text'},
-            'category':{'label':'Category', 'type':'text',
+            'category':{'label':'Category', 'type':'text', 'livesearch':'yes', 'livesearchempty':'yes',
                 'active':function() { return M.modFlagSet('ciniki.reporting', 0x01); },
                 },
             'frequency':{'label':'Frequency', 'required':'yes', 'default':'30', 'type':'toggle', 'toggles':{'10':'Daily', '30':'Weekly'}},
@@ -193,6 +193,27 @@ function ciniki_reporting_main() {
             'addFn':'M.ciniki_reporting_main.report.save(\'M.ciniki_reporting_main.report.addBlock();\');',
         },
     }
+    this.report.liveSearchCb = function(s, i, value) {
+        if( i == 'category' ) {
+            M.api.getJSONBgCb('ciniki.reporting.categorySearch', {'tnid':M.curTenantID, 'start_needle':value, 'limit':35},
+                function(rsp) {
+                    M.ciniki_reporting_main.report.liveSearchShow(s, i, M.gE(M.ciniki_reporting_main.report.panelUID + '_' + i), rsp.categories);
+                });
+        }
+    };
+    this.report.liveSearchResultValue = function(s, f, i, j, d) {
+        if( f == 'category' && d != null ) { return d.name; }
+        return '';
+    };
+    this.report.liveSearchResultRowFn = function(s, f, i, j, d) { 
+        if( f == 'category' && d != null ) {
+            return 'M.ciniki_reporting_main.report.updateCategory(\'' + s + '\',\'' + escape(d.name) + '\');';
+        }
+    };
+    this.report.updateCategory = function(s, category) {
+        M.gE(this.panelUID + '_category').value = unescape(category);
+        this.removeLiveSearch(s, 'category');
+    };
     this.report.fieldValue = function(s, i, d) { return this.data[i]; }
     this.report.fieldHistoryArgs = function(s, i) {
         return {'method':'ciniki.reporting.reportHistory', 'args':{'tnid':M.curTenantID, 'report_id':this.report_id, 'field':i}};

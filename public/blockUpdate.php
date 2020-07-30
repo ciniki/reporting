@@ -79,10 +79,10 @@ function ciniki_reporting_blockUpdate(&$ciniki) {
             ),
         ));
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.reporting.22', 'msg'=>'Report section not found', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.reporting.28', 'msg'=>'Report section not found', 'err'=>$rc['err']));
     }
     if( !isset($rc['block'][0]) ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.reporting.23', 'msg'=>'Unable to find report section'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.reporting.29', 'msg'=>'Unable to find report section'));
     }
     $existing_block = $rc['block'][0];
 
@@ -96,16 +96,16 @@ function ciniki_reporting_blockUpdate(&$ciniki) {
         //
         $rc = ciniki_core_loadMethod($ciniki, $pieces[0], $pieces[1], 'reporting', 'blocks');
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.reporting.24', 'msg'=>'Unknown block reference', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.reporting.30', 'msg'=>'Unknown block reference', 'err'=>$rc['err']));
         }
         $fn = $rc['function_call'];
         $rc = $fn($ciniki, $args['tnid'], array());
         if( !isset($rc['blocks'][$existing_block['block_ref']]) ) {
-            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.reporting.25', 'msg'=>'Unknown block reference', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.reporting.31', 'msg'=>'Unknown block reference', 'err'=>$rc['err']));
         }
         $block = $rc['blocks'][$existing_block['block_ref']];
     } else {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.reporting.26', 'msg'=>'Unknown block reference', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.reporting.32', 'msg'=>'Unknown block reference', 'err'=>$rc['err']));
     }
 
     //

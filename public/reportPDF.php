@@ -84,7 +84,7 @@ function ciniki_reporting_reportPDF(&$ciniki) {
         $rc = ciniki_mail_hooks_addMessage($ciniki, $args['tnid'], array(
             'customer_email'=>$email,
             'customer_name'=>$name,
-            'subject'=>$report['title'] . ' - ' . $dt->format('M j, Y'),
+            'subject'=>$dt->format('D M j, Y - ') . $report['title'],
             'html_content'=>$report['html'],
             'text_content'=>$report['text'],
             'attachments'=>array(array('content'=>$report['pdf']->Output($filename . '.pdf', 'S'), 'filename'=>$filename . '.pdf')),

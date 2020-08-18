@@ -40,7 +40,7 @@ function ciniki_reporting_blockDelete(&$ciniki) {
     //
     // Get the current settings for the report blocks
     //
-    $strsql = "SELECT id, uuid "
+    $strsql = "SELECT id, uuid, report_id, sequence "
         . "FROM ciniki_reporting_report_blocks "
         . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND id = '" . ciniki_core_dbQuote($ciniki, $args['block_id']) . "' "
@@ -89,6 +89,16 @@ function ciniki_reporting_blockDelete(&$ciniki) {
     //
     $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.reporting.block',
         $args['block_id'], $block['uuid'], 0x04);
+    if( $rc['stat'] != 'ok' ) {
+        ciniki_core_dbTransactionRollback($ciniki, 'ciniki.reporting');
+        return $rc;
+    }
+
+    //
+    // Update the sequences
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'sequencesUpdate');
+    $rc = ciniki_core_sequencesUpdate($ciniki, $args['tnid'], 'ciniki.reporting.block', 'report_id', $block['report_id'], 1, -1);
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.reporting');
         return $rc;

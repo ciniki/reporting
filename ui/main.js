@@ -189,6 +189,18 @@ function ciniki_reporting_main() {
             'delete':{'label':'Delete', 'visible':function() {return M.ciniki_reporting_main.report.report_id>0?'yes':'no';}, 'fn':'M.ciniki_reporting_main.report.remove();'},
             }},
         'blocks':{'label':'Report Sections', 'type':'simplegrid', 'num_cols':1,
+            'seqDrop':function(e,from,to) {
+                M.api.getJSONCb('ciniki.reporting.blockUpdate', {'tnid':M.curTenantID, 
+                    'block_id':M.ciniki_reporting_main.report.data.blocks[from].id, 
+                    'block_sequence':M.ciniki_reporting_main.report.data.blocks[to].sequence, 
+                    }, function(rsp) {
+                        if( rsp.stat != 'ok' ) {
+                            M.api.err(rsp);
+                            return false;
+                        }
+                        M.ciniki_reporting_main.report.open();
+                    });
+                },
             'addTxt':'Add Section',
             'addFn':'M.ciniki_reporting_main.report.save(\'M.ciniki_reporting_main.report.addBlock();\');',
         },
@@ -340,7 +352,7 @@ function ciniki_reporting_main() {
                 'onchange':'M.ciniki_reporting_main.block.setBlockOptions',
                 },
             'block_title':{'label':'Title', 'type':'text'},
-            'block_sequence':{'label':'Order', 'required':'yes', 'type':'text'},
+            'block_sequence':{'label':'Order', 'required':'yes', 'type':'text', 'size':'small'},
             }},
         '_options':{'label':'Options', 'visible':'hidden', 'fields':{
             }},
@@ -379,7 +391,7 @@ function ciniki_reporting_main() {
         if( bid != null ) { this.block_id = bid; }
         if( rid != null ) { this.report_id = rid; }
         if( list != null ) { this.nplist = list; }
-        M.api.getJSONCb('ciniki.reporting.blockGet', {'tnid':M.curTenantID, 'block_id':this.block_id}, function(rsp) {
+        M.api.getJSONCb('ciniki.reporting.blockGet', {'tnid':M.curTenantID, 'report_id':this.report_id, 'block_id':this.block_id}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;

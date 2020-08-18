@@ -75,7 +75,7 @@ function ciniki_reporting_blockUpdate(&$ciniki) {
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.reporting', array(
         array('container'=>'block', 'fname'=>'id', 
             'fields'=>array('report_id', 'btype', 
-                'block_title'=>'title', 'block_sequence'=>'sequence', 'block_ref', 'options'),
+                'block_title'=>'title', 'sequence', 'block_ref', 'options'),
             ),
         ));
     if( $rc['stat'] != 'ok' ) {
@@ -139,6 +139,19 @@ function ciniki_reporting_blockUpdate(&$ciniki) {
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.reporting');
         return $rc;
+    }
+
+    //
+    // Check if sequences should be updated
+    //
+    if( isset($args['sequence']) ) {
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'sequencesUpdate');
+        $rc = ciniki_core_sequencesUpdate($ciniki, $args['tnid'], 'ciniki.reporting.block', 
+            'report_id', $existing_block['report_id'], $args['sequence'], $existing_block['sequence']);
+        if( $rc['stat'] != 'ok' ) {
+            ciniki_core_dbTransactionRollback($ciniki, 'ciniki.reporting');
+            return $rc;
+        }
     }
 
     //

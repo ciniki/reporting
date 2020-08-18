@@ -21,6 +21,7 @@ function ciniki_reporting_blockGet($ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'),
+        'report_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Report'),
         'block_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Report Blocks'),
         ));
     if( $rc['stat'] != 'ok' ) {
@@ -57,13 +58,28 @@ function ciniki_reporting_blockGet($ciniki) {
     // Return default for new Report Blocks
     //
     if( $args['block_id'] == 0 ) {
+        $sequence = '';
+        if( isset($args['report_id']) ) {
+            $strsql = "SELECT MAX(sequence) AS sequence "
+                . "FROM ciniki_reporting_report_blocks "
+                . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+                . "AND report_id = '" . ciniki_core_dbQuote($ciniki, $args['report_id']) . "' "
+                . "";
+            $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.reporting', 'max');
+            if( $rc['stat'] != 'ok' ) {
+                return $rc;
+            }
+            if( isset($rc['max']['sequence']) ) {
+                $sequence = $rc['max']['sequence'] + 1;
+            }
+        }
         $block = array('id'=>0,
-            'report_id'=>'',
-            'btype'=>'',
-            'title'=>'',
-            'sequence'=>'',
-            'block_ref'=>'',
-            'options'=>'',
+            'report_id' => '',
+            'btype' => '',
+            'title' => '',
+            'block_sequence' => $sequence,
+            'block_ref' => '',
+            'options' => '',
         );
     }
 

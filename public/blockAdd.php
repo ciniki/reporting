@@ -110,6 +110,17 @@ function ciniki_reporting_blockAdd(&$ciniki) {
     }
 
     //
+    // Update any sequences
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'sequencesUpdate');
+    $rc = ciniki_core_sequencesUpdate($ciniki, $args['tnid'], 'ciniki.reporting.block', 
+        'report_id', $args['report_id'], $args['sequence'], -1);
+    if( $rc['stat'] != 'ok' ) {
+        ciniki_core_dbTransactionRollback($ciniki, 'ciniki.reporting');
+        return $rc;
+    }
+
+    //
     // Commit the transaction
     //
     $rc = ciniki_core_dbTransactionCommit($ciniki, 'ciniki.reporting');

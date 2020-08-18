@@ -20,17 +20,19 @@ function ciniki_reporting_reportChunkTable($ciniki, $tnid, &$report, $chunk) {
     }
 
     $html = '<table cellpadding="5">';
-    $html .= "<thead><tr>";
     $pdfhtml = '<table border="0" cellpadding="5" cellspacing="0" style="border: 0.1px solid #aaa;">';
-    $pdfhtml .= "<thead><tr>";
-    foreach($chunk['columns'] as $col) {
-        $html .= "<th>" . $col['label'] . "</th>";
-        $pdfhtml .= '<th bgcolor="#dddddd" style="border: 0.1px solid #aaa;' 
-            . (isset($col['pdfwidth']) ? 'width:' . $col['pdfwidth'] : '') . '">' . $col['label'] . "</th>";
+    if( !isset($chunk['header']) || $chunk['header'] == 'yes' ) {
+        $html .= "<thead><tr>";
+        $pdfhtml .= "<thead><tr>";
+        foreach($chunk['columns'] as $col) {
+            $html .= "<th>" . $col['label'] . "</th>";
+            $pdfhtml .= '<th bgcolor="#dddddd" style="border: 0.1px solid #aaa;' 
+                . (isset($col['pdfwidth']) ? 'width:' . $col['pdfwidth'] : '') . '">' . $col['label'] . "</th>";
+        }
+        $html .= "</tr></thead>";
+        $pdfhtml .= "</tr></thead>";
     }
-    $html .= "</tr></thead>";
     $html .= "<tbody>";
-    $pdfhtml .= "</tr></thead>";
     $pdfhtml .= "<tbody>";
 
     foreach($chunk['data'] as $row) {

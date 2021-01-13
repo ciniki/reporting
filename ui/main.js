@@ -103,6 +103,9 @@ function ciniki_reporting_main() {
                 p.sections['category_' + i] = {'label':rsp.categories[i].name, 
                     'type':'simplegrid', 'aside':'yes', 'num_cols':1,
                     'cvtype':'category',
+                    'editFn':function(s, i, d) {
+                        return 'M.ciniki_reporting_main.report.open(\'M.ciniki_reporting_main.categories.open();\',\'' + d.id + '\',M.ciniki_reporting_main.report.nplist);';
+                        },
                     };
                 p.data['category_' + i] = rsp.categories[i].reports;
             }

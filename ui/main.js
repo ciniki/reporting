@@ -61,7 +61,7 @@ function ciniki_reporting_main() {
             return d.title;
         }
         else if( this.sections[s].cvtype = 'chunk' ) {
-            if( d[this.sections[s].dataMaps[j]] != null ) {
+            if( d[this.sections[s].dataMaps[j]] != null && d[this.sections[s].dataMaps[j]].replace != null ) {
                 return d[this.sections[s].dataMaps[j]].replace(/\n/g, '<br/>');
             }
         }

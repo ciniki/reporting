@@ -61,7 +61,10 @@ function ciniki_reporting_main() {
             return d.title;
         }
         else if( this.sections[s].cvtype = 'chunk' ) {
-            if( d[this.sections[s].dataMaps[j]] != null && d[this.sections[s].dataMaps[j]].replace != null ) {
+            if( this.sections[s].dataTypes[j] != null && this.sections[s].dataTypes[j] == 'dollar' ) {
+                return M.formatDollar(d[this.sections[s].dataMaps[j]]);
+            }
+            else if( d[this.sections[s].dataMaps[j]] != null && d[this.sections[s].dataMaps[j]].replace != null ) {
                 return d[this.sections[s].dataMaps[j]].replace(/\n/g, '<br/>');
             }
         }
@@ -129,10 +132,14 @@ function ciniki_reporting_main() {
                                 'sct':'chunk_'+nc,
                                 'headerValues':[],
                                 'dataMaps':[],
+                                'dataTypes':[],
                                 };
                             for(var k in chunk.columns) {
                                 p.sections['chunk_' + nc].headerValues[k] = chunk.columns[k].label;
                                 p.sections['chunk_' + nc].dataMaps[k] = chunk.columns[k].field;
+                                if( chunk.columns[k].type != null ) { 
+                                    p.sections['chunk_' + nc].dataTypes[k] = chunk.columns[k].type;
+                                }
                             }
                             if( chunk.editApp != null ) {
                                 p.sections['chunk_' + nc].editApp = chunk.editApp;

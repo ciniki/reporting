@@ -92,7 +92,7 @@ function ciniki_reporting_categories($ciniki) {
     if( isset($args['report_id']) && $args['report_id'] > 0 ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'reporting', 'private', 'reportExec');
         $rc = ciniki_reporting_reportExec($ciniki, $args['tnid'], $args['report_id']);
-        if( $rc['stat'] != 'ok' ) {
+        if( $rc['stat'] != 'ok' && $rc['stat'] != 'empty' ) {
             return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.reporting.27', 'msg'=>'Unable to execute report', 'err'=>$rc['err']));
         }
         $rsp['report'] = $rc['report'];

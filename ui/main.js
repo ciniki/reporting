@@ -135,7 +135,9 @@ function ciniki_reporting_main() {
                                 'dataTypes':[],
                                 };
                             for(var k in chunk.columns) {
-                                p.sections['chunk_' + nc].headerValues[k] = chunk.columns[k].label;
+                                if( chunk.header == null || chunk.header == 'yes' ) {
+                                    p.sections['chunk_' + nc].headerValues[k] = chunk.columns[k].label;
+                                }
                                 p.sections['chunk_' + nc].dataMaps[k] = chunk.columns[k].field;
                                 if( chunk.columns[k].type != null ) { 
                                     p.sections['chunk_' + nc].dataTypes[k] = chunk.columns[k].type;
@@ -149,7 +151,6 @@ function ciniki_reporting_main() {
                             }
                             p.data['chunk_' + nc] = chunk.data;
                         }
-                        title = '';
                         nc++;
                     }
                 }
@@ -174,7 +175,9 @@ function ciniki_reporting_main() {
             'category':{'label':'Category', 'type':'text', 'livesearch':'yes', 'livesearchempty':'yes',
                 'active':function() { return M.modFlagSet('ciniki.reporting', 0x01); },
                 },
-            'frequency':{'label':'Frequency', 'required':'yes', 'default':'30', 'type':'toggle', 'toggles':{'10':'Daily', '30':'Weekly'}},
+            'frequency':{'label':'Frequency', 'required':'yes', 'default':'30', 'type':'toggle', 'toggles':{
+                '10':'Daily', '30':'Weekly', '50':'Monthly', '70':'Quarterly', '90':'Yearly'},
+                },
             }},
         '_next':{'label':'Next Run', 'aside':'yes', 'fields':{
             'next_date':{'label':'Date', 'required':'yes', 'type':'date'},

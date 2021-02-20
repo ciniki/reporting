@@ -79,13 +79,16 @@ function ciniki_reporting_reportRun($ciniki, $tnid, $report_id) {
         $dt->add(new DateInterval('P7D'));
     } elseif( isset($report['frequency']) && $report['frequency'] == 50 ) {
         $dt->add(new DateInterval('P1M'));
+    } elseif( isset($report['frequency']) && $report['frequency'] == 70 ) {
+        $dt->add(new DateInterval('P3M'));
+    } elseif( isset($report['frequency']) && $report['frequency'] == 90 ) {
+        $dt->add(new DateInterval('P1Y'));
     }
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
     $rc = ciniki_core_objectUpdate($ciniki, $tnid, 'ciniki.reporting.report', $report['id'], array('next_date'=>$dt->format('Y-m-d H:i:s'))); 
     if( $rc['stat'] != 'ok' ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.reporting.18', 'msg'=>'Unable to update the next run time', 'err'=>$rc['err']));
     }
-
 
     //
     // Create the email 

@@ -16,7 +16,9 @@
 #
 #                       10 - Daily
 #                       30 - Weekly
-#                       50 - Monthly **future**
+#                       50 - Monthly 
+#                       70 - Quarterly
+#                       90 - Yearly
 #
 # flags:            The options for the report. This determines the format for the report.
 #
@@ -24,6 +26,10 @@
 #                       0x02 - PDF Attachment, include all blocks in the PDF
 #                       0x04 - Excel Attachment, include all blocks in the Excel File **future**.
 #                       0x08 -
+#                       0x10 - 
+#                       0x20 - 
+#                       0x40 - 
+#                       0x80 - 
 #
 # skip_days:        The days of the week to skip
 #

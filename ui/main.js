@@ -149,6 +149,24 @@ function ciniki_reporting_main() {
                                     return 'M.ciniki_reporting_main.categories.openDataApp(\'' + this.sct + '\',\'' + i + '\');';
                                     };
                             }
+                            if( chunk.footer != null ) {
+                                p.sections['chunk_' + nc].footerValues = [];
+                                var pos = 0;
+                                for(var k in chunk.footer) {
+                                    if( chunk.footer[k].colspan != null ) {
+                                        for(var l = 0; l < chunk.footer[k].colspan; l++) {
+                                            p.sections['chunk_' + nc].footerValues[pos] = '';
+                                            pos++;
+                                        }
+                                    }
+                                    if( chunk.footer[k].type != null && chunk.footer[k].type == 'dollar' ) {
+                                        p.sections['chunk_' + nc].footerValues[pos] = M.formatDollar(chunk.footer[k].value);
+                                    } else {
+                                        p.sections['chunk_' + nc].footerValues[pos] = chunk.footer[k].value;
+                                    }
+                                    pos++;
+                                }
+                            }
                             p.data['chunk_' + nc] = chunk.data;
                         }
                         nc++;

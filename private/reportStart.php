@@ -169,7 +169,12 @@ function ciniki_reporting_reportStart($ciniki, $tnid, &$report) {
         }
     }
 
-    $report['pdf'] = new MYPDF('P', PDF_UNIT, 'LETTER', true, 'UTF-8', false);
+    if( ($report['flags']&0x10) == 0x10 ) {
+        $report['pdf'] = new MYPDF('L', PDF_UNIT, 'LETTER', true, 'UTF-8', false);
+        $report['pdf']->usable_width = 249;
+    } else {
+        $report['pdf'] = new MYPDF('P', PDF_UNIT, 'LETTER', true, 'UTF-8', false);
+    }
 
     //
     // Set margins
@@ -180,7 +185,6 @@ function ciniki_reporting_reportStart($ciniki, $tnid, &$report) {
     $report['pdf']->bottom_margin = 20;
     $report['pdf']->SetMargins($report['pdf']->left_margin, $report['pdf']->top_margin, $report['pdf']->right_margin);
     $report['pdf']->SetHeaderMargin($report['pdf']->header_height);
-    $report['pdf']->setPageOrientation('P', false);
     $report['pdf']->SetFooterMargin($report['pdf']->bottom_margin);
     $report['pdf']->title = $report['title'];
 

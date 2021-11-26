@@ -119,7 +119,7 @@ function ciniki_reporting_main() {
                     for(var j in rsp.report.blocks[i].chunks) {
                         var chunk = rsp.report.blocks[i].chunks[j];
                         if( chunk.type == 'message' ) {
-                            p.sections['chunk_' + nc] = {'label':title,
+                            p.sections['chunk_' + nc] = {'label':title + (chunk.title != null && chunk.title != '' ? (title != '' ? ' - ' : '') + chunk.title : ''),
                                 'type':'html', 
                                 'cvtype':'chunk',
                                 };

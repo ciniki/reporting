@@ -64,9 +64,18 @@ function ciniki_reporting_main() {
             if( this.sections[s].dataTypes[j] != null && this.sections[s].dataTypes[j] == 'dollar' ) {
                 return M.formatDollar(d[this.sections[s].dataMaps[j]]);
             }
+            else if( this.sections[s].dataTypes[j] != null && this.sections[s].dataTypes[j] == 'multiline' ) {
+                return M.multiline(d[this.sections[s].dataMaps[j]],d[this.sections[s].dataMaps2[j]]);
+            }
             else if( d[this.sections[s].dataMaps[j]] != null && d[this.sections[s].dataMaps[j]].replace != null ) {
                 return d[this.sections[s].dataMaps[j]].replace(/\n/g, '<br/>');
             }
+        }
+        return '';
+    }
+    this.categories.cellClass = function(s, i, j, d) {
+        if( this.sections[s].dataTypes != null && this.sections[s].dataTypes[j] != null ) {
+            return this.sections[s].dataTypes[j];
         }
         return '';
     }
@@ -132,6 +141,7 @@ function ciniki_reporting_main() {
                                 'sct':'chunk_'+nc,
                                 'headerValues':[],
                                 'dataMaps':[],
+                                'dataMaps2':[],
                                 'dataTypes':[],
                                 };
                             for(var k in chunk.columns) {
@@ -140,6 +150,9 @@ function ciniki_reporting_main() {
                                 }
                                 p.sections['chunk_' + nc].dataMaps[k] = chunk.columns[k].field;
                                 if( chunk.columns[k].type != null ) { 
+                                    if( chunk.columns[k].type == 'multiline' ) {
+                                        p.sections['chunk_' + nc].dataMaps2[k] = chunk.columns[k].line2;
+                                    }
                                     p.sections['chunk_' + nc].dataTypes[k] = chunk.columns[k].type;
                                 }
                             }

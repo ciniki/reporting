@@ -19,15 +19,19 @@ function ciniki_reporting_reportChunkTable($ciniki, $tnid, &$report, $chunk) {
         $report['text'] .= $chunk['textlist'];
     }
 
-    $html = '<table cellpadding="5">';
+    $html = '<table width="100%" cellpadding="5">';
     $pdfhtml = '<table border="0" cellpadding="5" cellspacing="0" style="border: 0.1px solid #aaa;">';
     if( !isset($chunk['header']) || $chunk['header'] == 'yes' ) {
         $html .= "<thead><tr>";
         $pdfhtml .= "<thead><tr>";
         foreach($chunk['columns'] as $col) {
-            $html .= "<th>" . $col['label'] . "</th>";
+            $html .= '<th style="'
+                . (isset($col['align']) && $col['align'] != '' ? "text-align: {$col['align']};" : '')
+                . '">' . $col['label'] . "</th>";
             $pdfhtml .= '<th bgcolor="#dddddd" style="border: 0.1px solid #aaa;' 
-                . (isset($col['pdfwidth']) ? 'width:' . $col['pdfwidth'] : '') . '">' . $col['label'] . "</th>";
+                . (isset($col['pdfwidth']) ? "width: {$col['pdfwidth']};" : '') 
+                . (isset($col['align']) && $col['align'] != '' ? "text-align: {$col['align']};" : '')
+                . '">' . $col['label'] . "</th>";
         }
         $html .= "</tr></thead>";
         $pdfhtml .= "</tr></thead>";
@@ -41,8 +45,13 @@ function ciniki_reporting_reportChunkTable($ciniki, $tnid, &$report, $chunk) {
         foreach($chunk['columns'] as $col) {
             $html .= '<td'
                 . (isset($col['colspan']) && $col['colspan'] != '' ? ' colspan="' . $col['colspan'] . '"' : '')
-                . ' style="border: 1px solid #aaa; padding: 5px;">';
-            $pdfhtml .= '<td style="border: 0.1px solid #aaa;' . (isset($col['pdfwidth']) ? 'width:' . $col['pdfwidth'] : '') . '">' ;
+                . ' style="border: 1px solid #aaa; padding: 5px;'
+                . (isset($col['align']) && $col['align'] != '' ? "text-align: {$col['align']};" : '')
+                . '">';
+            $pdfhtml .= '<td style="border: 0.1px solid #aaa;' 
+                . (isset($col['pdfwidth']) ? "width:{$col['pdfwidth']};" : '') 
+                . (isset($col['align']) && $col['align'] != '' ? "text-align: {$col['align']};" : '')
+                . '">' ;
             if( isset($row[$col['field']]) ) {
                 $field_value = $row[$col['field']];
                 if( isset($col['type']) && $col['type'] == 'dollar' ) {
@@ -69,11 +78,15 @@ function ciniki_reporting_reportChunkTable($ciniki, $tnid, &$report, $chunk) {
             if( isset($col['type']) && $col['type'] == 'dollar' ) {
                 $field_value = '$' . number_format($field_value, 2);
             }
-            $html .= "<th"
+            $html .= '<th style="'
+                . (isset($col['align']) && $col['align'] != '' ? "text-align: {$col['align']};" : '')
+                . '"'
                 . (isset($col['colspan']) && $col['colspan'] != '' ? ' colspan="' . $col['colspan'] . '"' : '')
                 . ">" . $field_value . "</th>";
             $pdfhtml .= '<th bgcolor="#dddddd" style="border: 0.1px solid #aaa;' 
-                . (isset($col['pdfwidth']) ? 'width:' . $col['pdfwidth'] : '') . '">' . $field_value . "</th>";
+                . (isset($col['pdfwidth']) ? "width:{$col['pdfwidth']};" : '') 
+                . (isset($col['align']) && $col['align'] != '' ? "text-align: {$col['align']};" : '')
+                . '">' . $field_value . "</th>";
         }
         $html .= "</tr></tfoot>";
         $pdfhtml .= "</tr></tfoot>";
@@ -85,7 +98,6 @@ function ciniki_reporting_reportChunkTable($ciniki, $tnid, &$report, $chunk) {
     $pdfhtml .= "</table>";
 
     $report['html'] .= $html;
-
 
     $report['pdf']->addHtml(1, $pdfhtml);
 

@@ -69,16 +69,22 @@ function ciniki_reporting_main() {
             }
             else if( d[this.sections[s].dataMaps[j]] != null && d[this.sections[s].dataMaps[j]].replace != null ) {
                 return d[this.sections[s].dataMaps[j]].replace(/\n/g, '<br/>');
+            } 
+            else if( this.sections[s].dataMaps[j] != null ) {
+                return d[this.sections[s].dataMaps[j]];
             }
         }
         return '';
     }
-    this.categories.cellClass = function(s, i, j, d) {
+/*    this.categories.cellClass = function(s, i, j, d) {
+        if( this.sections[s].cellClasses != null && this.sections[s].cellClasses[j] != null ) {
+            return this.sections[s].cellClasses[j];
+        }
         if( this.sections[s].dataTypes != null && this.sections[s].dataTypes[j] != null ) {
             return this.sections[s].dataTypes[j];
         }
         return '';
-    }
+    } */
     this.categories.rowClass = function(s, i, d) {
         if( this.sections[s].cvtype == 'category' && d.id == this.report_id ) {
             return 'highlight';
@@ -140,6 +146,8 @@ function ciniki_reporting_main() {
                                 'cvtype':'chunk',
                                 'sct':'chunk_'+nc,
                                 'headerValues':[],
+                                'headerClasses':[],
+                                'cellClasses':[],
                                 'dataMaps':[],
                                 'dataMaps2':[],
                                 'dataTypes':[],
@@ -154,6 +162,17 @@ function ciniki_reporting_main() {
                                         p.sections['chunk_' + nc].dataMaps2[k] = chunk.columns[k].line2;
                                     }
                                     p.sections['chunk_' + nc].dataTypes[k] = chunk.columns[k].type;
+                                    p.sections['chunk_' + nc].cellClasses[k] = chunk.columns[k].type;
+                                    p.sections['chunk_' + nc].headerClasses[k] = chunk.columns[k].type;
+                                }
+                                if( chunk.columns[k].align != null ) { 
+                                    if( p.sections['chunk_' + nc].cellClasses[k] == null ) {
+                                        p.sections['chunk_' + nc].cellClasses[k] = 'align' + chunk.columns[k].align;
+                                        p.sections['chunk_' + nc].headerClasses[k] = 'align' + chunk.columns[k].align;
+                                    } else {
+                                        p.sections['chunk_' + nc].cellClasses[k] += ' align' + chunk.columns[k].align;
+                                        p.sections['chunk_' + nc].headerClasses[k] += ' align' + chunk.columns[k].align;
+                                    }
                                 }
                             }
                             if( chunk.editApp != null ) {
@@ -164,6 +183,7 @@ function ciniki_reporting_main() {
                             }
                             if( chunk.footer != null ) {
                                 p.sections['chunk_' + nc].footerValues = [];
+                                p.sections['chunk_' + nc].footerClasses = [];
                                 var pos = 0;
                                 for(var k in chunk.footer) {
                                     if( chunk.footer[k].colspan != null ) {
@@ -176,6 +196,11 @@ function ciniki_reporting_main() {
                                         p.sections['chunk_' + nc].footerValues[pos] = M.formatDollar(chunk.footer[k].value);
                                     } else {
                                         p.sections['chunk_' + nc].footerValues[pos] = chunk.footer[k].value;
+                                    }
+                                    if( chunk.footer[k].align != null && chunk.footer[k].align != '' ) {
+                                        p.sections['chunk_' + nc].footerClasses[pos] = 'align' + chunk.footer[k].align;
+                                    } else {
+                                        p.sections['chunk_' + nc].footerClasses[pos] += 'align' + chunk.footer[k].align;
                                     }
                                     pos++;
                                 }

@@ -187,7 +187,7 @@ function ciniki_reporting_main() {
                                 var pos = 0;
                                 for(var k in chunk.footer) {
                                     if( chunk.footer[k].colspan != null ) {
-                                        for(var l = 0; l < chunk.footer[k].colspan; l++) {
+                                        for(var l = 1; l < chunk.footer[k].colspan; l++) {
                                             p.sections['chunk_' + nc].footerValues[pos] = '';
                                             pos++;
                                         }

@@ -210,6 +210,7 @@ function ciniki_reporting_reportUpdate(&$ciniki) {
             ciniki_core_dbTransactionRollback($ciniki, 'ciniki.reporting');
             return $rc;
         }
+        $report_user_ids = array();
         $report_users = array();
         if( isset($rc['users']) ) {
             $report_user_ids = array_keys($rc['users']);

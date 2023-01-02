@@ -23,6 +23,8 @@ function ciniki_reporting_reportPDF(&$ciniki) {
         'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'),
         'report_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Reports'),
         'email'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Email Report'),
+        'start_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'name'=>'Start'),
+        'end_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'name'=>'End'),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -53,7 +55,7 @@ function ciniki_reporting_reportPDF(&$ciniki) {
     // Execute the report
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'reporting', 'private', 'reportExec'); 
-    $rc = ciniki_reporting_reportExec($ciniki, $args['tnid'], $args['report_id']);
+    $rc = ciniki_reporting_reportExec($ciniki, $args['tnid'], $args);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }

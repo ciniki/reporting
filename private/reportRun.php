@@ -28,7 +28,9 @@ function ciniki_reporting_reportRun($ciniki, $tnid, $report_id) {
     // Execute the report
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'reporting', 'private', 'reportExec');
-    $rc = ciniki_reporting_reportExec($ciniki, $tnid, $report_id);
+    $rc = ciniki_reporting_reportExec($ciniki, $tnid, array(
+        'report_id' => $report_id,
+        ));
     if( $rc['stat'] != 'ok' && $rc['stat'] != 'empty' ) {
         //
         // Email the error code and information, that way they know the report ran but there was a problem.

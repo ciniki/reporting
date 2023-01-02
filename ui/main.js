@@ -49,13 +49,15 @@ function ciniki_reporting_main() {
     this.schedule.addClose('Back');
 
     //
-    // The panel to list the report
+    // The panel to list the reports and show a report
     //
     this.categories = new M.panel('Reports', 'ciniki_reporting_main', 'categories', 'mc', 'xlarge narrowaside', 'sectioned', 'ciniki.reporting.main.categories');
     this.categories.data = {};
     this.categories.nplist = [];
     this.categories.sections = {}
     this.categories.report_id = 0;
+    this.categories.start_date = '';
+    this.categories.end_date = '';
     this.categories.cellValue = function(s, i, j, d) {
         if( this.sections[s].cvtype == 'category' ) {
             return d.title;
@@ -91,6 +93,9 @@ function ciniki_reporting_main() {
         }
         return '';
     }
+    this.categories.fieldValue = function(s, i, d) { 
+        return this.data[i]; 
+    }
     this.categories.rowFn = function(s, i, d) {
         if( this.sections[s].cvtype == 'category' ) {
             return 'M.ciniki_reporting_main.categories.open(null,\'' + d.id + '\');';
@@ -107,9 +112,35 @@ function ciniki_reporting_main() {
         }
         M.startApp(this.sections[s].editApp.app,null,'M.ciniki_reporting_main.categories.open();','mc',args);
     }
+    this.categories.openPDF = function() {
+        
+        M.api.openPDF('ciniki.reporting.reportPDF', {
+            'tnid':M.curTenantID, 
+            'report_id':this.report_id,
+            'start_date':this.formFieldValue('dates', 'start_date'),
+            'end_date':this.formFieldValue('dates', 'end_date'),
+            });
+    }
     this.categories.open = function(cb,rid) {
         if( rid != null ) { this.report_id = rid; }
-        M.api.getJSONCb('ciniki.reporting.categories', {'tnid':M.curTenantID, 'report_id':this.report_id}, function(rsp) {
+        if( this.report_id > 0 ) {
+            if( this.sections.dates != null ) {
+                var start_date = this.formFieldValue('dates', 'start_date');
+                var end_date = this.formFieldValue('dates', 'end_date');
+                if( start_date == '' && this.start_date != '' ) {
+                    this.setFieldValue('start_date', this.start_date);
+                } else {
+                    this.start_date = start_date;
+                }
+                if( end_date == '' && this.end_date != '' ) {
+                    this.setFieldValue('end_date', this.end_date);
+                } else {
+                    this.end_date = end_date;
+                }
+            }
+            var c = '&start_date=' + encodeURIComponent(this.start_date) + '&end_date=' + encodeURIComponent(this.end_date);
+        }
+        M.api.postJSONCb('ciniki.reporting.categories', {'tnid':M.curTenantID, 'report_id':this.report_id}, c, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -128,6 +159,27 @@ function ciniki_reporting_main() {
                 p.data['category_' + i] = rsp.categories[i].reports;
             }
             if( p.report_id > 0 && rsp.report != null ) {
+                if( rsp.report.dates != null && rsp.report.dates == 'yes' ) {
+                    p.sections['dates'] = {
+                        'label':'Date Range',
+                        'aside':'yes',
+                        'fields':{
+                            'start_date':{'label':'Start', 'type':'date'},
+                            'end_date':{'label':'End', 'type':'date'},
+                            },
+                        };
+                    p.data.start_date = rsp.start_date;
+                    p.data.end_date = rsp.end_date;
+                    p.sections['_buttons'] = {
+                        'label':'',
+                        'hidelabel':'',
+                        'aside':'yes',
+                        'buttons':{
+                            'refresh':{'label':'Refresh', 'fn':'M.ciniki_reporting_main.categories.open();'},
+                            'download':{'label':'Download PDF', 'fn':'M.ciniki_reporting_main.categories.openPDF();'},
+                            },
+                        };
+                }
                 var nc = 0;
                 for(var i in rsp.report.blocks) {
                     var title = rsp.report.blocks[i].title;
@@ -554,7 +606,8 @@ function ciniki_reporting_main() {
             M.alert('App Error');
             return false;
         }
-       
+    
+        this.categories.report_id = 0;
         if( M.modFlagOn('ciniki.reporting', 0x01) ) {
             this.categories.open(cb);
         } else {

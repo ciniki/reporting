@@ -13,13 +13,13 @@
 // Returns
 // -------
 //
-function ciniki_reporting_reportExec($ciniki, $tnid, $report_id) {
+function ciniki_reporting_reportExec($ciniki, $tnid, $args) {
 
     //
     // Load the report
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'reporting', 'private', 'reportLoad');
-    $rc = ciniki_reporting_reportLoad($ciniki, $tnid, $report_id);
+    $rc = ciniki_reporting_reportLoad($ciniki, $tnid, $args['report_id']);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -41,6 +41,12 @@ function ciniki_reporting_reportExec($ciniki, $tnid, $report_id) {
     // Add the block data (chunks)
     //
     foreach($report['blocks'] as $bid => $block) {
+        if( isset($args['start_date']) ) {
+            $block['options']['start_date'] = $args['start_date'];
+        }
+        if( isset($args['end_date']) ) {
+            $block['options']['end_date'] = $args['end_date'];
+        }
         list($pkg, $mod, $blockname) = explode('.', $block['block_ref']);
         $rc = ciniki_core_loadMethod($ciniki, $pkg, $mod, 'reporting', 'block');
         if( $rc['stat'] == 'ok' ) {
@@ -50,6 +56,9 @@ function ciniki_reporting_reportExec($ciniki, $tnid, $report_id) {
                 error_log('RPTERR[01]: ' . print_r($rc, true));
             } elseif( isset($rc['chunks']) ) {
                 $report['blocks'][$bid]['chunks'] = $rc['chunks'];
+                if( isset($rc['dates']) && $rc['dates'] == 'yes' ) {    
+                    $report['dates'] = 'yes';
+                }
             }
         }
     }

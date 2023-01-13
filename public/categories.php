@@ -68,7 +68,7 @@ function ciniki_reporting_categories($ciniki) {
     } 
     elseif( $args['end_date'] != '' ) {
         $dt = new DateTime($args['end_date'], new DateTimezone($intl_timezone));
-        $dt->setTime(11,59,59);
+        $dt->setTime(23,59,59);
         $args['end_date'] = $dt->format('Y-m-d');
         $rsp['end_date'] = $dt->format($date_format);
     } else {

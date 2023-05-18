@@ -17,6 +17,7 @@ function ciniki_reporting_maps($ciniki) {
             '10'=>'Daily',
             '30'=>'Weekly',
             '50'=>'Monthly',
+            '90'=>'Yearly',
         ),
     );
 

@@ -286,7 +286,7 @@ function ciniki_reporting_main() {
             'frequency':{'label':'Frequency', 'required':'yes', 'default':'30', 'type':'toggle', 'toggles':{
                 '10':'Daily', '30':'Weekly', '50':'Monthly', '70':'Quarterly', '90':'Yearly'},
                 },
-            'flags5':{'label':'PDF Orientation', 'type':'flagtoggle', 'field':'flags', 'bit':0x10, 'default':'off'},
+            'flags5':{'label':'Landscape', 'type':'flagtoggle', 'field':'flags', 'bit':0x10, 'default':'off'},
             }},
         '_next':{'label':'Next Run', 'aside':'yes', 'fields':{
             'next_date':{'label':'Date', 'required':'yes', 'type':'date'},

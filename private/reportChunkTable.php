@@ -55,7 +55,11 @@ function ciniki_reporting_reportChunkTable($ciniki, $tnid, &$report, $chunk) {
             if( isset($row[$col['field']]) ) {
                 $field_value = $row[$col['field']];
                 if( isset($col['type']) && $col['type'] == 'dollar' ) {
-                    $field_value = '$' . number_format($field_value, 2);
+                    if( $field_value == 0 ) {
+                        $field_value = '';
+                    } else {
+                        $field_value = '$' . number_format($field_value, 2);
+                    }
                 }
                 if( isset($col['line2']) && isset($row[$col['line2']]) && $row[$col['line2']] != '' ) {
                     $field_value .= ($field_value != '' ? "\n" : '') . $row[$col['line2']];
@@ -76,7 +80,11 @@ function ciniki_reporting_reportChunkTable($ciniki, $tnid, &$report, $chunk) {
         foreach($chunk['footer'] as $col) {
             $field_value = $col['value'];
             if( isset($col['type']) && $col['type'] == 'dollar' ) {
-                $field_value = '$' . number_format($field_value, 2);
+                if( $field_value == 0 ) {
+                    $field_value = '';
+                } else {
+                    $field_value = '$' . number_format($field_value, 2);
+                }
             }
             $html .= '<th style="'
                 . (isset($col['align']) && $col['align'] != '' ? "text-align: {$col['align']};" : '')

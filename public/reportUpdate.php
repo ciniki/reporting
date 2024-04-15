@@ -17,7 +17,7 @@ function ciniki_reporting_reportUpdate(&$ciniki) {
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'),
         'report_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Reports'),
-        'user_ids'=>array('required'=>'no', 'blank'=>'no', 'type'=>'idlist', 'name'=>'Users'),
+        'user_ids'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'idlist', 'name'=>'Users'),
         'title'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Title'),
         'category'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Category'),
         'frequency'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Frequency'),
